@@ -116,6 +116,16 @@ body { font-family: var(--font); -webkit-tap-highlight-color: transparent; user-
 #hud .note { font-size: clamp(16px, 1.9vw, 20px); color: var(--bone); }
 #hud .note.bad { color: var(--blood); }
 @media (max-height: 460px) { #hud { min-width: 190px; padding: 6px 8px; gap: 3px; } #hud .row, #hud .scale-title { font-size: 16px; } #hud .bar i { height: 11px; } }
+/* крупная надпись над весами */
+#scale-label { position: absolute; z-index: 2; transform: translate(0, -50%); pointer-events: none; text-align: center; padding: 4px 12px 6px;
+  background: rgba(7, 6, 8, .84); border: 2px solid var(--wood); white-space: nowrap; transition: border-color .2s; }
+#scale-label .v { font-size: clamp(34px, 4.4vw, 56px); font-weight: 700; line-height: 1; color: var(--bone); font-variant-numeric: tabular-nums; }
+#scale-label .s { font-size: clamp(16px, 1.8vw, 21px); font-weight: 600; color: var(--ash); line-height: 1.1; }
+#scale-label.him { border-color: var(--blood); }
+#scale-label.him .v { color: var(--blood); }
+#scale-label.me .v { color: var(--bone); }
+#scale-label.pulse { animation: pulse .45s ease-out; }
+@keyframes pulse { 0% { transform: translate(0, -50%) scale(1.2); } 100% { transform: translate(0, -50%) scale(1); } }
 [hidden] { display: none !important; }
 @media (max-width: 600px), (max-height: 460px) { #tooltip { font-size: 16px; padding: 7px 9px; width: min(300px, 82vw); } #tooltip canvas, #tooltip img { width: 64px; height: 90px; } #tooltip h3 { font-size: 20px; } #tooltip .flavor { display: none; } }
 @media (prefers-reduced-motion: reduce) { #dialog .more { animation: none; } }
@@ -140,6 +150,7 @@ body { font-family: var(--font); -webkit-tap-highlight-color: transparent; user-
   <div id="helpview" hidden></div>
   <div id="flash"></div>
   <div id="fade"></div>
+  <div id="scale-label" hidden><div class="v">0</div><div class="s">равновесие</div></div>
   <div id="hud" hidden>
     <div id="hud-scale">
       <div class="scale-title"><span class="lbl">Весы</span><b id="hud-scale-val">0</b></div>
@@ -3680,7 +3691,31 @@ $('btn-cam').onclick = () => { G.meta.liveCam = !G.meta.liveCam; $('btn-cam').te
 // главные числа крупно: весы, кукушка, свечи, кости, зубы
 const hudBar = $('hud-bar');
 for (let i = -5; i <= 5; i++) { const c = document.createElement('i'); if (i === 0) c.className = 'mid'; hudBar.appendChild(c); }
-let hudKey = '';
+let hudKey = '', scaleKey = '';
+const scaleLabel = $('scale-label'), tmpScale = new V3();
+// надпись держится над весами, куда бы ни смотрела камера
+function updateScaleLabel() {
+  const b = G.b;
+  const show = !!b && $('screen').hidden && (cam.name === 'table' || cam.name === 'event');
+  if (!show) { scaleLabel.hidden = true; return; }
+  tmpScale.copy(scaleObj.g.position); tmpScale.x += 0.5; tmpScale.y += 0.95;
+  const p = tmpScale.project(camera);
+  if (p.z > 1 || p.x < -1.1 || p.x > 1.1 || p.y < -1.1 || p.y > 1.1) { scaleLabel.hidden = true; return; }
+  const r = app.getBoundingClientRect();
+  scaleLabel.hidden = false;
+  scaleLabel.style.left = Math.max(8, (p.x + 1) / 2 * r.width) + 'px';
+  scaleLabel.style.top = Math.min(r.height - 260, Math.max(120, (1 - p.y) / 2 * r.height)) + 'px';
+  const v = b.scale;
+  const key = String(v);
+  if (key === scaleKey) return;
+  const changed = scaleKey !== '';
+  scaleKey = key;
+  scaleLabel.className = v > 0 ? 'me' : v < 0 ? 'him' : '';
+  scaleLabel.querySelector('.v').textContent = v > 0 ? '+' + v : v < 0 ? '−' + (-v) : '0';
+  scaleLabel.querySelector('.s').textContent = v > 0 ? 'в твою пользу · до победы ' + Math.max(0, 5 - v)
+    : v < 0 ? 'в его пользу · до свечи ' + Math.max(0, 5 + v) : 'равновесие · нужно 5';
+  if (changed) { scaleLabel.classList.remove('pulse'); void scaleLabel.offsetWidth; scaleLabel.classList.add('pulse'); }
+}
 function updateHud() {
   const run = G.run, b = G.b;
   const show = !!run && $('screen').hidden;
@@ -3870,6 +3905,7 @@ function frame(t) {
   }
   updateHost(dt, time);
   if ((++hudTick & 7) === 0) updateHud();
+  updateScaleLabel();
   hoverTimer -= dt;
   if (hoverTimer <= 0) { hoverTimer = 0.15; if (pointer.has && !IS_TOUCH && !pointer.down) onHover(); }
   postMat.uniforms.time.value = time;
