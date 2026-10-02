@@ -91,3 +91,7 @@ INCLUDING ANY GENERAL, SPECIAL, INDIRECT, INCIDENTAL, OR CONSEQUENTIAL
 DAMAGES, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 FROM, OUT OF THE USE OR INABILITY TO USE THE FONT SOFTWARE OR FROM
 OTHER DEALINGS IN THE FONT SOFTWARE.
+
+---
+Изменение в этом проекте: у цифры «0» убрана точка внутри (в «Многоглазом» ноль с точкой
+на крупных размерах читался как «8»). Шрифт остаётся под лицензией SIL OFL 1.1.
