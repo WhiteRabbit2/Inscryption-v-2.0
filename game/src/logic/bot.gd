@@ -468,9 +468,11 @@ static func _key(c: Battle) -> String:
 
 # ================================================================ бой целиком
 
-## Играет бой до конца (или до turn_cap PLAY-ев). kind: "smart" / "simple".
-## opts: turn_cap (40), rewinds (0 — сколько перемоток «на ход назад» можно потратить), measure (true —
-##   считать ходы без выбора и для простого бота).
+## Играет бой до конца (или до turn_cap ходов). kind: "smart" / "simple".
+## opts: turn_cap (40 ходов серии; переигранные после перемотки не в счёт), rewinds (0 — сколько
+##   перемоток «на ход назад» можно потратить; после перемотки умный берёт следующий по оценке вариант
+##   хода, на который вернулись), measure (true — считать ходы без выбора и для простого бота; разбор
+##   идёт своим генератором и на игру простого бота не влияет).
 ## Возвращает: result ("win"/"lose"/"cap"), turns (длина итоговой записи серии в PLAY), plays (всего
 ##   нажатий PLAY с учётом переигранных), pauses, no_choice_turns, pass_turns, signal_lost, film_in /
 ##   film_off (снято Плёнки в кадре / за кадром), wasted (ударов в пустоту за кадром, впустую),
@@ -489,7 +491,9 @@ static func play_battle(b: Battle, kind: String, rng: RandomNumberGenerator, opt
 		"illegal": 0, "locked_turns": 0,
 	}
 	var ranks := {}   # "фаза:ход" → какой вариант брать после перемотки
-	while not b.over and out.plays < cap:
+	var mrng := RandomNumberGenerator.new()
+	mrng.seed = 20261002
+	while not b.over and b.stats.turns < cap and out.plays < cap * (1 + rewinds):
 		var at := "%d:%d" % [b.phase, b.turn]
 		var rank: int = ranks.get(at, 0)
 		out.pauses += 1
@@ -498,8 +502,10 @@ static func play_battle(b: Battle, kind: String, rng: RandomNumberGenerator, opt
 		for step in 4:
 			var info := {}
 			var acts: Array
-			if kind == "smart" or (measure and not counted):
+			if kind == "smart":
 				info = analyze(b, rng, rank)
+			elif measure and not counted:
+				info = analyze(b, mrng, rank)
 			if not counted and not info.is_empty():
 				counted = true
 				out.no_choice_turns += 1 if info.no_choice else 0
