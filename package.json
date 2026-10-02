@@ -1,0 +1,13 @@
+{
+  "name": "stol-mnogoglazogo",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Браузерный рогалик-декбилдер. Сама игра — index.html, этот файл нужен только для тестов.",
+  "scripts": {
+    "sim": "node tests/sim.mjs 300",
+    "e2e": "node tests/e2e-bot.mjs 3"
+  },
+  "devDependencies": {
+    "three": "0.128.0"
+  }
+}
