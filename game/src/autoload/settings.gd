@@ -13,8 +13,6 @@ var effects := 0.5
 var text_scale := 1.0
 ## Быстрые анимации боя.
 var fast_animations := false
-## Простой шрифт для описаний (вместо узкого пиксельного) — для тех, кому так легче читать.
-var plain_font := false
 var master_volume := 0.8
 var music_volume := 0.6
 var sfx_volume := 0.9
@@ -42,7 +40,6 @@ func load_settings() -> void:
 	effects = clampf(cfg.get_value("view", "effects", effects), 0.0, 1.0)
 	text_scale = clampf(cfg.get_value("view", "text_scale", text_scale), 0.8, 1.6)
 	fast_animations = cfg.get_value("game", "fast_animations", fast_animations)
-	plain_font = cfg.get_value("view", "plain_font", plain_font)
 	master_volume = clampf(cfg.get_value("audio", "master", master_volume), 0.0, 1.0)
 	music_volume = clampf(cfg.get_value("audio", "music", music_volume), 0.0, 1.0)
 	sfx_volume = clampf(cfg.get_value("audio", "sfx", sfx_volume), 0.0, 1.0)
@@ -55,7 +52,6 @@ func save_settings() -> void:
 	cfg.set_value("view", "effects", effects)
 	cfg.set_value("view", "text_scale", text_scale)
 	cfg.set_value("view", "fullscreen", fullscreen)
-	cfg.set_value("view", "plain_font", plain_font)
 	cfg.set_value("game", "fast_animations", fast_animations)
 	cfg.set_value("audio", "master", master_volume)
 	cfg.set_value("audio", "music", music_volume)

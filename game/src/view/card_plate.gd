@@ -71,13 +71,13 @@ func _draw_insert() -> void:
 	var f_bold := UiKit.FONT_BOLD
 	var stat_w := 64.0
 	var left := Rect2(inner.position, Vector2(inner.size.x - stat_w, inner.size.y))
-	var name_x := left.position.x + (34.0 if mode == "hand" else 0.0)
+	var name_x := left.position.x + (50.0 if mode == "hand" else 0.0)
 	var name_w := left.end.x - name_x
 	var title := String(card.get("name", ""))
-	var name_size := _fit(title, name_w, 28, 22)
-	if name_size < 23:
+	var name_size := _fit(title, name_w, 26, 20)
+	if f_bold.get_string_size(title, HORIZONTAL_ALIGNMENT_LEFT, -1, name_size).x > name_w:
 		title = CardDB.short_name(card)
-		name_size = _fit(title, name_w, 28, 22)
+		name_size = _fit(title, name_w, 26, 16)
 	draw_string(f_bold, Vector2(name_x, inner.position.y + 26), title, HORIZONTAL_ALIGNMENT_CENTER, name_w, name_size, INK)
 	var badges: Array = card.get("badges", [])
 	var s := 4 if badges.size() <= 1 else 3

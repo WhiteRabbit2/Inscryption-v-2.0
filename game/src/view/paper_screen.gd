@@ -183,16 +183,18 @@ func _draw_cell(c: Dictionary, cr: Rect2, faded: bool) -> void:
 	var w := cr.size.x - 56
 	_kind_icon(String(c.get("icon", "")), cr.position + Vector2(10, 14), col)
 	var title := String(c.get("title", ""))
-	var ts := _fit(f, title, w, 26, 20)
-	draw_string(f, Vector2(x, cr.position.y + 32), title, HORIZONTAL_ALIGNMENT_LEFT, w, ts, col)
+	var stamp_w := 104.0 if String(c.get("theory", "")) != "" else (70.0 if c.get("night", false) else 0.0)
+	var ts := _fit(f, title, w - stamp_w, 26, 18)
+	draw_string(f, Vector2(x, cr.position.y + 32), _ellipsize(f, title, w - stamp_w, ts), HORIZONTAL_ALIGNMENT_LEFT, -1,
+		ts, col)
 	var sub := String(c.get("sub", ""))
 	if sub != "":
 		draw_string(fb, Vector2(x, cr.position.y + 62), _ellipsize(fb, sub, w, 21), HORIZONTAL_ALIGNMENT_LEFT, -1, 21,
 			Color(col, col.a * 0.8))
 	if String(c.get("theory", "")) != "":
-		_stamp(cr.position + Vector2(cr.size.x - 92, 6), "ТЕОРИЯ", faded)
+		_stamp(cr.position + Vector2(cr.size.x - 104, 6), "ТЕОРИЯ", faded)
 	elif c.get("night", false):
-		_stamp(cr.position + Vector2(cr.size.x - 62, 6), "16+", faded)
+		_stamp(cr.position + Vector2(cr.size.x - 66, 6), "16+", faded)
 
 
 ## Обрезать строку по ширине с многоточием на границе слова.
@@ -218,11 +220,11 @@ func _fit(f: Font, text: String, w: float, big: int, small: int) -> int:
 
 func _stamp(p: Vector2, text: String, faded: bool) -> void:
 	var f := UiKit.FONT_BOLD
-	var w := f.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, 22).x + 14
+	var w := f.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, 18).x + 14
 	var col := Color(MARKER, 0.35 if faded else 0.9)
 	draw_set_transform(p + Vector2(w * 0.5, 14), -0.08)
 	draw_rect(Rect2(Vector2(-w * 0.5, -14), Vector2(w, 28)), col, false, 2.5)
-	draw_string(f, Vector2(-w * 0.5 + 7, 8), text, HORIZONTAL_ALIGNMENT_LEFT, -1, 22, col)
+	draw_string(f, Vector2(-w * 0.5 + 7, 7), text, HORIZONTAL_ALIGNMENT_LEFT, -1, 18, col)
 	draw_set_transform(Vector2.ZERO)
 
 

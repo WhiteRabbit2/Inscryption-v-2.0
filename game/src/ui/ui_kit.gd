@@ -9,14 +9,11 @@ const BONE := Color("e3dbbd")
 const ASH := Color("a89a74")
 const BLOOD := Color("c8402c")
 
-const FONT_BODY := preload("res://assets/fonts/Handjet-600.ttf")
-const FONT_BOLD := preload("res://assets/fonts/Handjet-700.ttf")
-const FONT_TITLE := preload("res://assets/fonts/RuslanDisplay-400.ttf")
-## Крупные числа (атака, здоровье, цена, шкалы): у Handjet ноль с точкой и издалека похож на 8,
-## у Pixelify «2» и «5» похожи на «S». Russo One читается однозначно.
-const FONT_NUM := preload("res://assets/fonts/RussoOne-Regular.ttf")
-## Простой шрифт для описаний (настройка «Простой шрифт»).
-const FONT_PLAIN := preload("res://assets/fonts/IBMPlexMono-400.ttf")
+## Один шрифт на всю игру — Rubik (обычный читаемый, OFL). Константы оставлены, чтобы не править вызовы.
+const FONT_BODY := preload("res://assets/fonts/rubik_500.tres")
+const FONT_BOLD := preload("res://assets/fonts/rubik_700.tres")
+const FONT_TITLE := FONT_BOLD
+const FONT_NUM := FONT_BOLD
 
 
 ## Размер шрифта с учётом настройки «размер текста».
@@ -55,10 +52,6 @@ static func rich(size := 30) -> RichTextLabel:
 	r.add_theme_font_size_override("normal_font_size", fs(size))
 	r.add_theme_font_size_override("bold_font_size", fs(size))
 	r.add_theme_font_override("bold_font", FONT_BOLD)
-	if Settings.plain_font:
-		r.add_theme_font_override("normal_font", FONT_PLAIN)
-		r.add_theme_font_override("italics_font", FONT_PLAIN)
-		r.add_theme_font_size_override("normal_font_size", fs(int(size * 0.8)))
 	r.add_theme_color_override("default_color", BONE)
 	r.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	return r

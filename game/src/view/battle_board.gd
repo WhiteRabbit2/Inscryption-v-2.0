@@ -273,13 +273,13 @@ func _by_label(g: Dictionary, pr: Rect2) -> void:
 func _draw_film_gauge() -> void:
 	var f := UiKit.FONT_BOLD
 	var x0 := 150.0
-	draw_string(f, Vector2(x0, FILM_Y + 40), "ПЛЁНКА СЕРИИ", HORIZONTAL_ALIGNMENT_LEFT, -1, 30, UiKit.BONE)
+	draw_string(f, Vector2(x0, FILM_Y + 48), "ПЛЁНКА", HORIZONTAL_ALIGNMENT_LEFT, -1, 30, UiKit.BONE)
 	var loss: int = forecast.get("film", 0) if show_forecast else 0
 	var n := str(maxi(b.film, 0))
 	var fn := UiKit.FONT_NUM
-	draw_string_outline(fn, Vector2(x0 + 190, FILM_Y + 60), n, HORIZONTAL_ALIGNMENT_LEFT, -1, 60, 8, Color.BLACK)
-	draw_string(fn, Vector2(x0 + 190, FILM_Y + 60), n, HORIZONTAL_ALIGNMENT_LEFT, -1, 60, Color.WHITE)
-	var fx := x0 + 270.0
+	draw_string_outline(fn, Vector2(x0 + 150, FILM_Y + 60), n, HORIZONTAL_ALIGNMENT_LEFT, -1, 56, 8, Color.BLACK)
+	draw_string(fn, Vector2(x0 + 150, FILM_Y + 60), n, HORIZONTAL_ALIGNMENT_LEFT, -1, 56, Color.WHITE)
+	var fx := x0 + 230.0
 	for i in b.film_max:
 		var r := Rect2(Vector2(fx + i * 46, FILM_Y + 14), Vector2(40, 52))
 		var has := i < b.film
@@ -300,13 +300,13 @@ func _draw_signal_gauge() -> void:
 	var f := UiKit.FONT_BOLD
 	var x0 := 150.0
 	var y := SIG_Y + 10
-	draw_string(f, Vector2(x0, y + 44), "ТВОЙ СИГНАЛ", HORIZONTAL_ALIGNMENT_LEFT, -1, 30, UiKit.BONE)
+	draw_string(f, Vector2(x0, y + 52), "СИГНАЛ", HORIZONTAL_ALIGNMENT_LEFT, -1, 30, UiKit.BONE)
 	var loss: int = forecast.get("signal", 0) if show_forecast else 0
 	var n := str(maxi(b.sig, 0))
 	var fn := UiKit.FONT_NUM
-	draw_string_outline(fn, Vector2(x0 + 190, y + 64), n, HORIZONTAL_ALIGNMENT_LEFT, -1, 60, 8, Color.BLACK)
-	draw_string(fn, Vector2(x0 + 190, y + 64), n, HORIZONTAL_ALIGNMENT_LEFT, -1, 60, Color.WHITE)
-	var fx := x0 + 270.0
+	draw_string_outline(fn, Vector2(x0 + 150, y + 64), n, HORIZONTAL_ALIGNMENT_LEFT, -1, 56, 8, Color.BLACK)
+	draw_string(fn, Vector2(x0 + 150, y + 64), n, HORIZONTAL_ALIGNMENT_LEFT, -1, 56, Color.WHITE)
+	var fx := x0 + 230.0
 	for i in b.sig_max:
 		var h := 18.0 + i * 7.0
 		var r := Rect2(Vector2(fx + i * 34, y + 62 - h), Vector2(26, h))
@@ -333,12 +333,12 @@ func _draw_forecast() -> void:
 			lines.append(["−%d сигнала" % forecast.signal_lanes[l], BAD])
 		for s in forecast.strikes:
 			if s.lane == l and s.target == "offscreen":
-				lines.append(["мимо кадра" if s.side == "you" else "его удар мимо кадра", MUTED])
+				lines.append(["мимо кадра" if s.side == "you" else "его удар мимо", MUTED])
 				break
 		var y := MID_Y + 30
 		for ln in lines:
 			draw_rect(Rect2(Vector2(lw * l + 20, y - 26), Vector2(lw - 40, 32)), Color(0, 0, 0, 0.6))
-			draw_string(f, Vector2(lw * l, y - 2), ln[0], HORIZONTAL_ALIGNMENT_CENTER, lw, 28, ln[1])
+			draw_string(f, Vector2(lw * l, y - 3), ln[0], HORIZONTAL_ALIGNMENT_CENTER, lw, 24, ln[1])
 			y += 36
 
 

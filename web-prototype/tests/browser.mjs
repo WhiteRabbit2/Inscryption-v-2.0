@@ -17,7 +17,7 @@ export async function loadPlaywright() {
 
 // В тестах Google Fonts недоступен — отдаём Handjet из папки игры на Godot, чтобы скриншоты были с настоящим шрифтом.
 function handjetCss() {
-  const dir = path.join(ROOT, '..', 'game', 'assets', 'fonts');
+  const dir = path.join(ROOT, 'tests', 'fonts');
   const face = (file, w) => {
     const p = path.join(dir, file);
     if (!fs.existsSync(p)) return '';

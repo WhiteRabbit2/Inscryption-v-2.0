@@ -93,8 +93,8 @@ func fit_board(r: Rect2) -> void:
 	var k := r.size.x / BattleBoard.BASE.x
 	board.scale = Vector2(k, k)
 	board.position = r.position + Vector2(0, (r.size.y - BattleBoard.BASE.y * k) * 0.5)
-	host.size = Vector2(100, 100) * k
-	host.position = board.position + Vector2(10, 6) * k
+	host.size = Vector2(86, 86) * k
+	host.position = board.position + Vector2(6, 2) * k
 	subtitle.position = board.position + Vector2(0, 760) * k
 	subtitle.size = Vector2(BattleBoard.BASE.x, 60)
 	subtitle.scale = Vector2(k, k)

@@ -2,13 +2,13 @@
 
 importer="font_data_dynamic"
 type="FontFile"
-uid="uid://djbaurc5mjs42"
-path="res://.godot/imported/Handjet-700.ttf-195f02122de124ed435edc0b32f663aa.fontdata"
+uid="uid://ck1ke524mmvew"
+path="res://.godot/imported/Rubik-Variable.ttf-0d6caa2cebc29bdfa43eba92e1157738.fontdata"
 
 [deps]
 
-source_file="res://assets/fonts/Handjet-700.ttf"
-dest_files=["res://.godot/imported/Handjet-700.ttf-195f02122de124ed435edc0b32f663aa.fontdata"]
+source_file="res://assets/fonts/Rubik-Variable.ttf"
+dest_files=["res://.godot/imported/Rubik-Variable.ttf-0d6caa2cebc29bdfa43eba92e1157738.fontdata"]
 
 [params]
 
