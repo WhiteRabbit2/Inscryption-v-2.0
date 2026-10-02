@@ -37,6 +37,7 @@ var _wink_armed := false
 var _busy := false
 var _hand_plates: Array = []
 var _auto_t := 0.0
+var _dead_names := {}
 
 
 func _ready() -> void:
@@ -406,12 +407,90 @@ func _on_play() -> void:
 
 func _act(a: Dictionary) -> void:
 	_busy = true
+	_dead_names.clear()
+	for c in b.you:
+		if c != null:
+			_dead_names[c.uid] = CardDB.short_name(c)
 	var ev := b.apply(a)
 	await _playback(ev)
 	_busy = false
 	_sync()
 	if b.over:
 		_show_result()
+	else:
+		_comment(a, ev)
+
+
+## Одна реплика ведущего на действие — самое заметное из случившегося. Не на каждый чих.
+func _comment(a: Dictionary, ev: Array) -> void:
+	var film := 0
+	var sig := 0
+	var off := 0
+	var died_you := ""
+	var died_tape := 0
+	var flat := false
+	var moved_by := ""
+	var squint := false
+	for e in ev:
+		match e.t:
+			"film":
+				film += -int(e.delta)
+			"signal":
+				sig += -int(e.delta)
+			"strike":
+				if e.side == "you" and e.target == "offscreen":
+					off += 1
+			"die":
+				if e.side == "tape":
+					died_tape += 1
+			"flatten":
+				flat = true
+			"gaze_add":
+				squint = true
+			"gaze_plan":
+				if String(e.by).begins_with("card:"):
+					moved_by = String(e.by)
+	if a.type == "play":
+		for e in ev:
+			if e.t == "die" and e.side == "you":
+				died_you = _name_of_dead(e.uid)
+		var key := ""
+		if film >= 3:
+			key = "film_big"
+		elif b.sig <= 2 and sig > 0:
+			key = "signal_low"
+		elif flat:
+			key = "flatten"
+		elif died_you != "":
+			say(Lines.fmt("you_die", null, {"name": died_you}))
+			return
+		elif sig > 0:
+			key = "signal_hit"
+		elif off > 0 and film == 0:
+			key = "offscreen"
+		elif film > 0:
+			key = "film_hit"
+		elif died_tape > 0:
+			key = "tape_die"
+		elif squint:
+			key = "squint"
+		if key != "":
+			say(Lines.pick(key))
+		return
+	if a.type == "place" and moved_by != "":
+		var uid := int(moved_by.substr(5))
+		for c in b.you:
+			if c != null and c.uid == uid:
+				say(Lines.fmt("gaze_moved_by_card", null, {"name": CardDB.short_name(c)}))
+				return
+	if a.type == "place" and randf() < 0.35:
+		var c = b.you[int(a.lane)]
+		if c != null:
+			say(Lines.fmt("place_lit" if b.lit(int(a.lane)) else "place_off", null, {"name": CardDB.short_name(c)}))
+
+
+func _name_of_dead(uid: int) -> String:
+	return _dead_names.get(uid, "")
 
 
 func _speed() -> float:
