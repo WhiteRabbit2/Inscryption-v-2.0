@@ -187,7 +187,7 @@ func test_night_show_reward() -> void:
 	if r.state == "theory":
 		r.resolve({"pick": 0})
 	var b := r.start_battle()
-	check_eq(b.film_max, 7, "Ночной показ: Плёнка 7")
+	check_eq(b.film_max, 7 + int(Run.DIFFICULTY.film_bonus), "Ночной показ: Плёнка 7 + сложность")
 	_force_win(b, 1, 0)
 	r.finish_battle(b)
 	check_eq(r.fantiki, 4, "двойные фантики")

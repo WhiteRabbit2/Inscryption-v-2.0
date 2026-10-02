@@ -18,6 +18,9 @@ extends RefCounted
 
 const SAVE_VERSION := 1
 const REWINDS := 2
+## Сложность ночи поверх сценариев (подобрано симуляцией ботами): твари бьют на 1 сильнее,
+## у каждой серии на 1 Плёнки больше (кроме пилота). Пилот и обучение не трогаем.
+const DIFFICULTY := {"tape_atk": 1, "film_bonus": 1}
 
 ## Фантики за серию: победа, Ночной показ (вместо обычной победы — двойные), чистая серия, удары сверх нужного.
 const FANTIKI := {"win": 2, "night": 4, "clean": 1, "overkill_max": 3}
@@ -198,6 +201,9 @@ func start_battle() -> Battle:
 		over = prep.cfg
 	over.signal = battle_signal(ep)
 	over.winks = eyes
+	if int(ep.get("level", 0)) > 0:
+		over.tape_atk = int(over.get("tape_atk", ep.get("cfg", {}).get("tape_atk", 0))) + int(DIFFICULTY.tape_atk)
+		over.film = int(ep.get("film", Battle.DEFAULTS.film)) + int(DIFFICULTY.film_bonus)
 	signal_penalty = 0  # помеха «Сосед» действует на одну серию
 	battle = Battle.create(ep, deck, pockets, over, rng.randi())
 	stats.battles += 1

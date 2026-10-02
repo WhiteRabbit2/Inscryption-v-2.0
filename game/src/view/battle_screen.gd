@@ -16,6 +16,8 @@ var b: Battle
 var rewinds := 2
 ## Если задан — поле кладётся на кинескоп телевизора в 3D-комнате (иначе серый макет).
 var tv: TvStage
+## Если задан — перемотки считает ночь (Run), иначе бой сам по себе (макет).
+var run: Run
 ## Автоход для проверок без человека.
 var auto := false
 
@@ -117,7 +119,7 @@ func start(battle: Battle, rewinds_left := 2) -> void:
 	_sync()
 	var line: String = b.episode.get("line", "")
 	say(line if line != "" else "Серия %s. Поехали." % b.episode.get("name", ""))
-	if b.episode.get("tutorial", false):
+	if b.episode.get("tutorial", false) and not auto:
 		_tut = 0
 		_tut_next()
 
@@ -754,8 +756,12 @@ func _center(c: Control) -> Control:
 
 
 func _rewind(to_start: bool) -> void:
-	rewinds -= 1
-	b.rewind(to_start)
+	if run:
+		run.use_rewind(b, to_start)
+		rewinds = run.rewinds
+	else:
+		rewinds -= 1
+		b.rewind(to_start)
 	for c in overlay.get_children():
 		c.queue_free()
 	overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE

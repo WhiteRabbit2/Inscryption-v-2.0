@@ -9,6 +9,7 @@
 ## Структура репозитория
 
 - `game/` — **основная версия на Godot 4.7** (в работе, переезд из браузерного прототипа). Рендерер Compatibility. Тесты: `godot --headless --path game -s res://tests/run_tests.gd`. Стиль GDScript проверяется `gdlint` (настройки в `game/.gdlintrc`).
+  Устройство: `src/logic/` — чистая логика (CardDB, Episodes, Gaze, Battle, Run, ProgramGrid, Segments, Theories, Meta, Bot, Lines); `src/view/` — комната (Room, TvStage), бой (BattleScreen, BattleBoard, CardPlate), газета (PaperScreen), рубрики (SegmentPanel); `src/game.gd` — вся ночь от меню до итога. Автопроверка целой ночи: `godot --headless --path game -- --auto --speed=40`. Баланс: `godot --headless --path game -s res://tests/sim.gd -- battles=30 bot=simple`. Сложность ночи — `Run.DIFFICULTY`.
 - `web-prototype/` — первый браузерный прототип (один `index.html`), сохранён как рабочая демо-версия. Описание ниже относится к нему.
 - `docs/steam-release.md` — памятка по выпуску в Steam.
 
