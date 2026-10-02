@@ -39,6 +39,10 @@ func _ready() -> void:
 	rect.material = _mat
 	add_child(rect)
 	set_anchors_preset(Control.PRESET_FULL_RECT)
+	if not get_parent() is Control:
+		# без родителя-интерфейса якоря не работают — растягиваемся на окно сами
+		get_viewport().size_changed.connect(_fill_window)
+		_fill_window()
 	resized.connect(_fit)
 	Settings.changed.connect(_apply_settings)
 	_fit()
@@ -47,6 +51,11 @@ func _ready() -> void:
 
 func _process(_delta: float) -> void:
 	_mat.set_shader_parameter("time_s", Time.get_ticks_msec() / 1000.0)
+
+
+func _fill_window() -> void:
+	position = Vector2.ZERO
+	size = get_viewport_rect().size
 
 
 ## Перевод координат экрана (интерфейса) в пиксели внутреннего 3D-кадра.

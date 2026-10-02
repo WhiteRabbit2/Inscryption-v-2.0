@@ -67,13 +67,13 @@ static func raster(id: String) -> PackedByteArray:
 						var dx: float = (x + 0.5 - cm[1]) / cm[3]
 						var dy: float = (y + 0.5 - cm[2]) / cm[4]
 						if dx * dx + dy * dy <= 1.0:
-							_set(g, x, y, cm[5])
+							_put(g, x, y, cm[5])
 			"r":
 				for y in range(int(floor(cm[2])), int(ceil(cm[2] + cm[4]))):
 					for x in range(int(floor(cm[1])), int(ceil(cm[1] + cm[3]))):
-						_set(g, x, y, cm[5])
+						_put(g, x, y, cm[5])
 			"p":
-				_set(g, int(cm[1]), int(cm[2]), cm[3])
+				_put(g, int(cm[1]), int(cm[2]), cm[3])
 			"t":
 				for y in H:
 					for x in W:
@@ -83,7 +83,7 @@ static func raster(id: String) -> PackedByteArray:
 						var b := _edge(cm[3], cm[4], cm[5], cm[6], px, py)
 						var d := _edge(cm[5], cm[6], cm[1], cm[2], px, py)
 						if (a >= 0 and b >= 0 and d >= 0) or (a <= 0 and b <= 0 and d <= 0):
-							_set(g, x, y, cm[7])
+							_put(g, x, y, cm[7])
 			"l":
 				var vx: float = cm[3] - cm[1]
 				var vy: float = cm[4] - cm[2]
@@ -97,7 +97,7 @@ static func raster(id: String) -> PackedByteArray:
 						var ex: float = px - (cm[1] + vx * t)
 						var ey: float = py - (cm[2] + vy * t)
 						if ex * ex + ey * ey <= rr * rr + 0.05:
-							_set(g, x, y, cm[6])
+							_put(g, x, y, cm[6])
 	_cache[id] = g
 	return g
 
@@ -106,7 +106,7 @@ static func _edge(ax: float, ay: float, bx: float, by: float, px: float, py: flo
 	return (bx - ax) * (py - ay) - (by - ay) * (px - ax)
 
 
-static func _set(g: PackedByteArray, x: int, y: int, c: int) -> void:
+static func _put(g: PackedByteArray, x: int, y: int, c: int) -> void:
 	if x < 0 or y < 0 or x >= W or y >= H:
 		return
 	if c == 2:

@@ -6,7 +6,7 @@
 <title>Стол Многоглазого</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Handjet:wght@500;600;700&display=swap">
 <style>
 /* Одна тёмная картинка: ночь, лампа, кость, кровь. Слой интерфейса — поверх 3D. */
 :root {
@@ -17,7 +17,7 @@
   --ash: #988a63;        /* второстепенный текст */
   --blood: #c23322;      /* акцент */
   --blood-dark: #5a1414;
-  --font: 'Pixelify Sans', 'Courier New', monospace;
+  --font: 'Handjet', 'Arial Narrow', 'Courier New', sans-serif;
   color-scheme: dark;
 }
 html, body { height: 100%; margin: 0; background: var(--night); color: var(--bone); overflow: hidden; }
@@ -28,13 +28,13 @@ body { font-family: var(--font); -webkit-tap-highlight-color: transparent; user-
 
 /* подсказка сверху */
 #prompt { position: absolute; left: 10px; top: 10px; max-width: min(44vw, 460px); padding: 6px 12px; text-align: left;
-  font-size: clamp(13px, 1.7vw, 17px); color: var(--bone); background: rgba(7, 6, 8, .72); border: 2px solid var(--wood); pointer-events: none; text-wrap: balance; }
+  font-size: clamp(17px, 2.1vw, 23px); line-height: 1.2; color: var(--bone); background: rgba(7, 6, 8, .8); border: 2px solid var(--wood); pointer-events: none; text-wrap: balance; }
 #prompt:empty { display: none; }
 #prompt b { color: var(--blood); font-weight: 600; }
 
 /* кнопки в углу */
 #corner { position: absolute; right: 10px; top: 10px; display: flex; gap: 6px; }
-.btn { font-family: var(--font); font-size: clamp(12px, 1.5vw, 15px); color: var(--bone); background: var(--soot); border: 2px solid var(--wood); padding: 5px 10px; cursor: pointer; letter-spacing: .04em; }
+.btn { font-family: var(--font); font-weight: 600; font-size: clamp(16px, 1.9vw, 20px); color: var(--bone); background: var(--soot); border: 2px solid var(--wood); padding: 5px 10px; cursor: pointer; letter-spacing: .04em; }
 .btn:hover, .btn:focus-visible { border-color: var(--bone); outline: none; }
 .btn.red { border-color: var(--blood); }
 .btn:disabled { opacity: .45; cursor: default; }
@@ -43,21 +43,21 @@ body { font-family: var(--font); -webkit-tap-highlight-color: transparent; user-
 #app[data-view="table"] #dialog, #app[data-view="event"] #dialog { bottom: auto; top: 15%; width: min(90vw, 620px); }
 #dialog { position: absolute; left: 50%; bottom: 18px; transform: translateX(-50%); width: min(94vw, 720px); padding: 10px 16px 12px; background: rgba(9, 8, 8, .9);
   border: 2px solid var(--wood); box-shadow: 0 0 0 2px #000; pointer-events: none; }
-#dialog .who { font-size: 12px; letter-spacing: .18em; color: var(--blood); margin-bottom: 4px; }
-#dialog .text { font-size: clamp(15px, 2vw, 20px); line-height: 1.35; min-height: 1.35em; }
-#dialog .more { position: absolute; right: 10px; bottom: 6px; font-size: 12px; color: var(--ash); animation: blink 1s steps(2) infinite; }
+#dialog .who { font-size: 15px; font-weight: 700; letter-spacing: .18em; color: var(--blood); margin-bottom: 4px; }
+#dialog .text { font-size: clamp(20px, 2.6vw, 27px); font-weight: 600; line-height: 1.25; min-height: 1.35em; }
+#dialog .more { position: absolute; right: 10px; bottom: 6px; font-size: 15px; color: var(--ash); animation: blink 1s steps(2) infinite; }
 @keyframes blink { 50% { opacity: 0; } }
 
 /* описание карты */
-#tooltip { position: absolute; z-index: 5; width: min(300px, 86vw); padding: 10px 12px; background: rgba(12, 10, 9, .95); border: 2px solid var(--wood); pointer-events: none; font-size: 14px; line-height: 1.3; }
+#tooltip { position: absolute; z-index: 5; width: min(380px, 88vw); padding: 10px 12px; background: rgba(12, 10, 9, .95); border: 2px solid var(--wood); pointer-events: none; font-size: 19px; font-weight: 500; line-height: 1.2; }
 #tooltip .row { display: flex; gap: 10px; align-items: flex-start; }
-#tooltip canvas, #tooltip img { flex: none; width: 96px; height: 135px; }
+#tooltip canvas, #tooltip img { flex: none; width: 112px; height: 158px; image-rendering: auto; }
 #tooltip .info { min-width: 0; }
-#tooltip h3 { margin: 0 0 4px; font-size: 18px; font-weight: 600; text-wrap: balance; }
-#tooltip .cost { color: var(--ash); font-size: 13px; }
+#tooltip h3 { margin: 0 0 4px; font-size: 26px; font-weight: 700; text-wrap: balance; }
+#tooltip .cost { color: var(--ash); font-size: 18px; }
 #tooltip .stats { margin: 4px 0; }
 #tooltip .sig { display: flex; gap: 6px; margin-top: 6px; align-items: flex-start; }
-#tooltip .sig canvas { width: 18px; height: 18px; flex: none; margin-top: 1px; }
+#tooltip .sig canvas { width: 20px; height: 20px; flex: none; margin-top: 2px; image-rendering: pixelated; }
 #tooltip .sig b { color: var(--bone); font-weight: 600; }
 #tooltip .sig span { color: var(--ash); }
 #tooltip .flavor { margin-top: 8px; color: var(--ash); font-style: italic; }
@@ -66,7 +66,7 @@ body { font-family: var(--font); -webkit-tap-highlight-color: transparent; user-
 
 /* выбор вариантов */
 #choices { position: absolute; left: 50%; bottom: 18px; transform: translateX(-50%); display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; width: min(94vw, 720px); }
-#choices .btn { font-size: clamp(14px, 1.8vw, 17px); padding: 8px 14px; }
+#choices .btn { font-size: clamp(18px, 2.2vw, 22px); padding: 8px 14px; }
 
 /* полноэкранные панели: заставка, справка, итоги */
 #screen, #helpview { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(5, 4, 5, .82); z-index: 8; overflow-y: auto; }
@@ -74,12 +74,12 @@ body { font-family: var(--font); -webkit-tap-highlight-color: transparent; user-
 #screen .panel, #helpview .panel { width: min(640px, 100%); padding: 20px 22px; background: var(--soot); border: 2px solid var(--wood); box-shadow: 0 0 0 3px #000; }
 #screen h1 { margin: 0 0 6px; font-size: clamp(28px, 6vw, 48px); font-weight: 600; letter-spacing: .02em; color: var(--bone); text-wrap: balance; }
 #screen h2, #helpview h2 { margin: 0 0 10px; font-size: clamp(20px, 4vw, 28px); font-weight: 600; text-wrap: balance; }
-#screen p { margin: 8px 0; line-height: 1.4; color: var(--bone); }
+#screen p { margin: 8px 0; line-height: 1.3; color: var(--bone); font-size: 21px; font-weight: 500; }
 #screen .muted { color: var(--ash); }
 #screen .actions, #helpview .actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
-#helpview .rules { font-size: 15px; }
+#helpview .rules { font-size: 20px; line-height: 1.25; }
 #helpview .rules li { margin: 4px 0; }
-#screen input { font-family: var(--font); font-size: 20px; background: var(--night); color: var(--bone); border: 2px solid var(--wood); padding: 6px 8px; width: 100%; box-sizing: border-box; }
+#screen input { font-family: var(--font); font-size: 26px; background: var(--night); color: var(--bone); border: 2px solid var(--wood); padding: 6px 8px; width: 100%; box-sizing: border-box; }
 #screen input:focus { outline: none; border-color: var(--blood); }
 #screen .deathcard { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
 #screen .deathcard canvas { width: 128px; height: 180px; flex: none; }
@@ -93,15 +93,31 @@ body { font-family: var(--font); -webkit-tap-highlight-color: transparent; user-
 #deckview .grid canvas { width: 100%; height: auto; cursor: help; }
 
 /* всплывающие числа урона */
-.float { position: absolute; font-size: clamp(18px, 3vw, 30px); font-weight: 600; color: var(--blood); text-shadow: 2px 2px 0 #000; pointer-events: none; transform: translate(-50%, -50%); white-space: nowrap; z-index: 4; }
+.float { position: absolute; font-size: clamp(26px, 3.6vw, 40px); font-weight: 700; color: var(--blood); text-shadow: 2px 2px 0 #000; pointer-events: none; transform: translate(-50%, -50%); white-space: nowrap; z-index: 4; }
 .float.good { color: var(--bone); }
 
 #flash { position: absolute; inset: 0; pointer-events: none; background: var(--blood); opacity: 0; mix-blend-mode: multiply; z-index: 3; }
 #fade { position: absolute; inset: 0; pointer-events: none; background: #000; opacity: 1; transition: opacity .8s; z-index: 9; }
 #loading { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 18px; color: var(--ash); z-index: 10; text-align: center; padding: 16px; }
 #rotate { position: absolute; left: 50%; bottom: 10px; transform: translateX(-50%); width: max-content; max-width: calc(100vw - 32px); padding: 6px 10px; font-size: 13px; color: var(--ash); background: rgba(7, 6, 8, .8); border: 1px solid var(--wood); pointer-events: none; text-align: center; }
+/* панель с главными числами: всё важное — крупно и без 3D */
+#hud { position: absolute; left: 10px; bottom: 12px; display: flex; flex-direction: column; gap: 6px; padding: 10px 12px; min-width: 230px;
+  background: rgba(7, 6, 8, .82); border: 2px solid var(--wood); pointer-events: none; font-weight: 600; z-index: 2; }
+#hud .row { display: flex; justify-content: space-between; gap: 14px; font-size: clamp(19px, 2.2vw, 24px); line-height: 1.1; }
+#hud .row b { font-size: 1.25em; font-weight: 700; color: var(--bone); font-variant-numeric: tabular-nums; }
+#hud .lbl { color: var(--ash); }
+#hud .scale-title { display: flex; justify-content: space-between; font-size: clamp(19px, 2.2vw, 24px); }
+#hud .bar { display: grid; grid-template-columns: repeat(11, 1fr); gap: 3px; margin: 4px 0 2px; }
+#hud .bar i { height: 16px; background: #221d18; border: 1px solid #3a3126; }
+#hud .bar i.mid { background: #4c4230; }
+#hud .bar i.me { background: var(--bone); }
+#hud .bar i.him { background: var(--blood); }
+#hud .bar-legend { display: flex; justify-content: space-between; font-size: 15px; color: var(--ash); }
+#hud .note { font-size: clamp(16px, 1.9vw, 20px); color: var(--bone); }
+#hud .note.bad { color: var(--blood); }
+@media (max-height: 460px) { #hud { min-width: 190px; padding: 6px 8px; gap: 3px; } #hud .row, #hud .scale-title { font-size: 16px; } #hud .bar i { height: 11px; } }
 [hidden] { display: none !important; }
-@media (max-width: 600px), (max-height: 460px) { #tooltip { font-size: 12px; padding: 7px 9px; width: min(260px, 80vw); } #tooltip canvas, #tooltip img { width: 56px; height: 79px; } #tooltip h3 { font-size: 15px; } #tooltip .flavor { display: none; } }
+@media (max-width: 600px), (max-height: 460px) { #tooltip { font-size: 16px; padding: 7px 9px; width: min(300px, 82vw); } #tooltip canvas, #tooltip img { width: 64px; height: 90px; } #tooltip h3 { font-size: 20px; } #tooltip .flavor { display: none; } }
 @media (prefers-reduced-motion: reduce) { #dialog .more { animation: none; } }
 @media (max-width: 600px) { #corner .btn { padding: 4px 7px; } #prompt { top: 46px; max-width: calc(100vw - 20px); } }
 </style>
@@ -113,6 +129,7 @@ body { font-family: var(--font); -webkit-tap-highlight-color: transparent; user-
   <div id="corner">
     <button class="btn" id="btn-deck" hidden>Колода</button>
     <button class="btn" id="btn-help">Правила</button>
+    <button class="btn" id="btn-cam">Камера: спокойная</button>
     <button class="btn" id="btn-sound">Звук: да</button>
   </div>
   <div id="tooltip" hidden></div>
@@ -123,6 +140,18 @@ body { font-family: var(--font); -webkit-tap-highlight-color: transparent; user-
   <div id="helpview" hidden></div>
   <div id="flash"></div>
   <div id="fade"></div>
+  <div id="hud" hidden>
+    <div id="hud-scale">
+      <div class="scale-title"><span class="lbl">Весы</span><b id="hud-scale-val">0</b></div>
+      <div class="bar" id="hud-bar"></div>
+      <div class="bar-legend"><span>его победа</span><span>твоя победа</span></div>
+      <div class="note" id="hud-note"></div>
+    </div>
+    <div class="row" id="hud-clock"><span class="lbl">Кукушка через</span><b id="hud-clock-val">3</b></div>
+    <div class="row"><span class="lbl">Свечи</span><b id="hud-candles">2 из 2</b></div>
+    <div class="row" id="hud-bones-row"><span class="lbl">Кости</span><b id="hud-bones">0</b></div>
+    <div class="row"><span class="lbl">Зубы</span><b id="hud-teeth">0</b></div>
+  </div>
   <div id="rotate" hidden>Поверни телефон горизонтально — так стол виден целиком</div>
   <div id="loading">Многоглазый зажигает лампу…</div>
 </div>
@@ -1477,48 +1506,60 @@ function paperFill(ctx, w, h, seed, base = PAL.paper) {
   for (let i = 0; i < 3; i++) { ctx.fillStyle = 'rgba(120,96,60,0.12)'; const sx = r() * w, sy = r() * h, rr = 4 + r() * 8; ctx.beginPath(); ctx.arc(sx, sy, rr, 0, 7); ctx.fill(); }
 }
 
+// Лицо карты рисуется в 128×180 настоящим шрифтом (Handjet), цифры — крупно.
+const FACE_W = 128, FACE_H = 180;
+const CARD_FONT = "'Handjet', 'Arial Narrow', sans-serif";
+function fitFont(ctx, text, weight, size, maxW) {
+  let sz = size;
+  ctx.font = `${weight} ${sz}px ${CARD_FONT}`;
+  while (ctx.measureText(text).width > maxW && sz > 12) { sz--; ctx.font = `${weight} ${sz}px ${CARD_FONT}`; }
+  return sz;
+}
 function drawCardFace(ctx, c, opts = {}) {
-  const W = CARD_W, H = CARD_H;
+  const W = FACE_W, H = FACE_H;
   ctx.imageSmoothingEnabled = false;
   paperFill(ctx, W, H, hashStr(c.uid || c.id) % 1000, c.death ? '#c2b48c' : PAL.paper);
   // рамка
-  ctx.fillStyle = PAL.ink; ctx.fillRect(0, 0, W, 1); ctx.fillRect(0, H - 1, W, 1); ctx.fillRect(0, 0, 1, H); ctx.fillRect(W - 1, 0, 1, H);
-  ctx.fillStyle = PAL.paperDark; ctx.fillRect(2, 2, W - 4, 1); ctx.fillRect(2, H - 3, W - 4, 1); ctx.fillRect(2, 2, 1, H - 4); ctx.fillRect(W - 3, 2, 1, H - 4);
-  // углы скруглить
-  ctx.clearRect(0, 0, 1, 1); ctx.clearRect(W - 1, 0, 1, 1); ctx.clearRect(0, H - 1, 1, 1); ctx.clearRect(W - 1, H - 1, 1, 1);
+  ctx.fillStyle = PAL.ink; ctx.fillRect(0, 0, W, 3); ctx.fillRect(0, H - 3, W, 3); ctx.fillRect(0, 0, 3, H); ctx.fillRect(W - 3, 0, 3, H);
+  ctx.fillStyle = PAL.paperDark; ctx.fillRect(6, 6, W - 12, 1); ctx.fillRect(6, H - 7, W - 12, 1); ctx.fillRect(6, 6, 1, H - 12); ctx.fillRect(W - 7, 6, 1, H - 12);
+  ctx.clearRect(0, 0, 2, 2); ctx.clearRect(W - 2, 0, 2, 2); ctx.clearRect(0, H - 2, 2, 2); ctx.clearRect(W - 2, H - 2, 2, 2);
+  ctx.textBaseline = 'alphabetic';
   // имя
   const base = L.CARDS[c.id];
-  drawTextCentered(ctx, (base && base.short && c.name === base.name) ? base.short : c.name, W / 2, 5, PAL.ink, 1, W - 8);
+  const name = (base && base.short && c.name === base.name) ? base.short : c.name;
+  ctx.fillStyle = PAL.ink; ctx.textAlign = 'center';
+  fitFont(ctx, name, 700, 27, W - 18);
+  ctx.fillText(name, W / 2, 30);
   // цена
-  let cx = W - 5;
+  ctx.textAlign = 'left';
   if (c.blood > 0) {
-    for (let i = 0; i < Math.min(c.blood, 4); i++) { cx -= 6; drawIcon(ctx, DROP, cx, 12, PAL.blood); }
+    for (let i = 0; i < Math.min(c.blood, 4); i++) drawIcon(ctx, DROP, 10 + i * 18, 36, PAL.blood, 3);
   } else if (c.bones > 0) {
-    const s = String(c.bones);
-    cx -= textWidth(s) ; drawText(ctx, s, cx, 12, PAL.ink); cx -= 9; drawIcon(ctx, BONE, cx, 13, PAL.ink);
+    drawIcon(ctx, BONE, 10, 40, PAL.ink, 3);
+    ctx.font = `700 24px ${CARD_FONT}`; ctx.fillStyle = PAL.ink; ctx.fillText('×' + c.bones, 36, 52);
   }
   // рисунок
-  const ax = (W - ART_W * 2) / 2, ay = 19;
+  const ax = (W - ART_W * 4) / 2, ay = 56;
   if (c.death && c.death.arts) {
-    drawArt(ctx, c.death.arts[0], ax, ay, 2, [0, 10]);
-    drawArt(ctx, c.death.arts[1], ax, ay, 2, [10, 19]);
-    drawArt(ctx, c.death.arts[2], ax, ay, 2, [19, 28]);
-    ctx.fillStyle = PAL.blood; for (let y = ay; y < ay + 40; y += 3) { ctx.fillRect(ax + 19, y, 2, 1); ctx.fillRect(ax + 37, y + 1, 2, 1); }
-  } else drawArt(ctx, c.art || c.id, ax, ay, 2);
-  if (c.fused) { ctx.fillStyle = PAL.blood; for (let x = 6; x < W - 6; x += 4) ctx.fillRect(x, 40 + ((x / 4) & 1), 2, 1); }
-  // сигилы
+    drawArt(ctx, c.death.arts[0], ax, ay, 4, [0, 10]);
+    drawArt(ctx, c.death.arts[1], ax, ay, 4, [10, 19]);
+    drawArt(ctx, c.death.arts[2], ax, ay, 4, [19, 28]);
+    ctx.fillStyle = PAL.blood; for (let y = ay; y < ay + 80; y += 6) { ctx.fillRect(ax + 38, y, 4, 2); ctx.fillRect(ax + 74, y + 2, 4, 2); }
+  } else drawArt(ctx, c.art || c.id, ax, ay, 4);
+  if (c.fused) { ctx.fillStyle = PAL.blood; for (let x = 12; x < W - 12; x += 8) ctx.fillRect(x, 96 + ((x / 8) & 1) * 2, 4, 2); }
+  // сигилы — по центру нижней строки, между цифрами
   const sg = c.sigils || [];
-  const sw = sg.length * 11 - 2;
+  const sw = sg.length * 22 - 4;
   let sx = Math.round(W / 2 - sw / 2);
-  sg.forEach(s => { drawIcon(ctx, SIGIL_ICONS[s] || SIGIL_ICONS.flying, sx, 61, PAL.ink); sx += 11; });
+  sg.forEach(sid => { drawIcon(ctx, SIGIL_ICONS[sid] || SIGIL_ICONS.flying, sx, 146, PAL.ink, 2); sx += 22; });
   // атака и здоровье
   const atk = opts.atk != null ? opts.atk : c.atk;
   const hp = opts.hp != null ? opts.hp : c.hp;
   const maxHp = c.maxHp != null ? c.maxHp : c.hp;
-  drawText(ctx, String(atk), 4, 73, opts.atkBuff ? PAL.blood : PAL.ink, 3, 1);
-  const hs = String(hp);
-  drawText(ctx, hs, W - 4 - textWidth(hs) * 3, 73, hp < maxHp ? PAL.blood : PAL.ink, 3, 1);
-  // маленькие пометки «атака / здоровье»
+  ctx.font = `700 50px ${CARD_FONT}`;
+  ctx.fillStyle = opts.atkBuff ? PAL.blood : PAL.ink; ctx.textAlign = 'left'; ctx.fillText(String(atk), 11, H - 11);
+  ctx.fillStyle = hp < maxHp ? PAL.blood : PAL.ink; ctx.textAlign = 'right'; ctx.fillText(String(hp), W - 11, H - 11);
+  ctx.textAlign = 'left';
 }
 
 function drawCardBack(ctx, kind) {
@@ -1542,7 +1583,7 @@ function drawCardBack(ctx, kind) {
 }
 
 function cardCanvas(c, opts) {
-  const cv = document.createElement('canvas'); cv.width = CARD_W; cv.height = CARD_H;
+  const cv = document.createElement('canvas'); cv.width = FACE_W; cv.height = FACE_H;
   drawCardFace(cv.getContext('2d'), c, opts);
   return cv;
 }
@@ -1646,7 +1687,7 @@ let viewScale = 1; // во сколько раз отодвинуть камер
 function resize() {
   const w = Math.max(1, app.clientWidth), h = Math.max(1, app.clientHeight);
   const aspect = w / h;
-  const target = LOW ? 320 : 480;
+  const target = LOW ? 400 : 640;
   RW = aspect >= 1 ? target : Math.round(target * 0.8);
   RH = Math.max(120, Math.round(RW / aspect));
   if (renderer) { renderer.setSize(RW, RH, false); rt.setSize(RW, RH); }
@@ -2150,8 +2191,10 @@ function layoutHandLimits() { const tanV = Math.tan(THREE.MathUtils.degToRad(cam
 class CardObj {
   constructor(card, place) {
     this.uid = card.uid; this.card = Object.assign({}, card);
-    this.cv = document.createElement('canvas'); this.cv.width = CARD_W; this.cv.height = CARD_H;
+    this.cv = document.createElement('canvas'); this.cv.width = FACE_W; this.cv.height = FACE_H;
     this.tex = canvasTex(this.cv);
+    // уменьшение без потери тонких линий: сглаживание при отдалении, пиксели при приближении
+    this.tex.minFilter = THREE.LinearMipmapLinearFilter; this.tex.generateMipmaps = true;
     this.g = new THREE.Group();
     this.mat = new THREE.MeshPhongMaterial({ map: this.tex, emissive: 0xffffff, emissiveMap: this.tex, emissiveIntensity: 0.14, shininess: 2, specular: 0x000000 });
     this.front = new THREE.Mesh(CARD_GEO, this.mat); this.front.position.y = 0.0065; this.front.receiveShadow = true;
@@ -2168,7 +2211,7 @@ class CardObj {
   }
   redraw(opts) {
     if (opts) this.drawOpts = opts;
-    const ctx = this.cv.getContext('2d'); ctx.clearRect(0, 0, CARD_W, CARD_H);
+    const ctx = this.cv.getContext('2d'); ctx.clearRect(0, 0, FACE_W, FACE_H);
     drawCardFace(ctx, this.card, this.drawOpts);
     this.tex.needsUpdate = true;
   }
@@ -3633,6 +3676,38 @@ $('btn-help').onclick = () => {
   h.hidden = false;
   $('help-close').onclick = () => { h.hidden = true; };
 };
+$('btn-cam').onclick = () => { G.meta.liveCam = !G.meta.liveCam; $('btn-cam').textContent = 'Камера: ' + (G.meta.liveCam ? 'живая' : 'спокойная'); saveMeta(); };
+// главные числа крупно: весы, кукушка, свечи, кости, зубы
+const hudBar = $('hud-bar');
+for (let i = -5; i <= 5; i++) { const c = document.createElement('i'); if (i === 0) c.className = 'mid'; hudBar.appendChild(c); }
+let hudKey = '';
+function updateHud() {
+  const run = G.run, b = G.b;
+  const show = !!run && $('screen').hidden;
+  const key = [show, b ? b.scale : 'x', b ? b.bones : 'x', b && b.boss ? b.boss.clock : 'x', run ? run.candles : 0, run ? run.teeth : 0, cam.name].join('|');
+  if (key === hudKey) return;
+  hudKey = key;
+  $('hud').hidden = !show;
+  if (!show) return;
+  $('hud-scale').hidden = !b;
+  $('hud-bones-row').hidden = !b;
+  $('hud-clock').hidden = !(b && b.boss);
+  if (b) {
+    const v = b.scale;
+    $('hud-scale-val').textContent = v > 0 ? '+' + v : String(v);
+    [...hudBar.children].forEach((c, i) => {
+      const pos = i - 5;
+      c.className = pos === 0 ? 'mid' : (v > 0 && pos > 0 && pos <= v) ? 'me' : (v < 0 && pos < 0 && pos >= v) ? 'him' : '';
+    });
+    const note = $('hud-note');
+    note.className = 'note' + (v <= -3 ? ' bad' : '');
+    note.textContent = v === 0 ? 'Равновесие. Нужен перевес 5.' : v > 0 ? 'До победы: ' + Math.max(0, 5 - v) : 'До потери свечи: ' + Math.max(0, 5 + v);
+    $('hud-bones').textContent = b.bones;
+    if (b.boss) $('hud-clock-val').textContent = b.boss.clock + ' ' + plural(b.boss.clock, 'ход', 'хода', 'ходов');
+  }
+  $('hud-candles').textContent = run.candles + ' из ' + run.maxCandles;
+  $('hud-teeth').textContent = run.teeth;
+}
 $('btn-sound').onclick = () => { sfx.init(); G.meta.sound = !G.meta.sound; sfx.setOn(G.meta.sound); $('btn-sound').textContent = 'Звук: ' + (G.meta.sound ? 'да' : 'нет'); saveMeta(); };
 
 async function titleScreen() {
@@ -3729,7 +3804,7 @@ async function playRun(run) {
 }
 
 /* ---------- Главный цикл отрисовки ---------- */
-let lastT = performance.now(), hoverTimer = 0, handLift = 1;
+let lastT = performance.now(), hoverTimer = 0, handLift = 1, hudTick = 0;
 const tmpV = new V3();
 G.lights = 1;
 function frame(t) {
@@ -3738,12 +3813,15 @@ function frame(t) {
   const time = t / 1000;
   updateTweens();
   // камера
-  const k = 1 - Math.exp(-dt * 3.0 * Math.min(SPEED, 10));
+  const k = 1 - Math.exp(-dt * (G.meta.liveCam ? 3.0 : 2.2) * Math.min(SPEED, 10));
   cam.pos.lerp(cam.tPos, k); cam.look.lerp(cam.tLook, k);
   tmpV.copy(cam.pos).sub(cam.look).multiplyScalar(viewScale).add(cam.look);
-  tmpV.x += Math.sin(time * 0.5) * 0.03 + pointer.x * 0.07;
-  tmpV.y += Math.sin(time * 0.7) * 0.02 + pointer.y * 0.04;
-  if (cam.shake > 0) { tmpV.x += (Math.random() - 0.5) * cam.shake; tmpV.y += (Math.random() - 0.5) * cam.shake; cam.shake = Math.max(0, cam.shake - dt * 0.6); }
+  const live = !!G.meta.liveCam;
+  if (live) {
+    tmpV.x += Math.sin(time * 0.5) * 0.03 + pointer.x * 0.07;
+    tmpV.y += Math.sin(time * 0.7) * 0.02 + pointer.y * 0.04;
+  }
+  if (cam.shake > 0) { const sh = cam.shake * (live ? 1 : 0.2); tmpV.x += (Math.random() - 0.5) * sh; tmpV.y += (Math.random() - 0.5) * sh; cam.shake = Math.max(0, cam.shake - dt * 0.6); }
   camera.position.copy(tmpV); camera.lookAt(cam.look);
   const tanV = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
   // рука опущена, пока курсор не у нижнего края; поднимается целиком при наведении или выборе карты
@@ -3756,7 +3834,8 @@ function frame(t) {
   for (const o of G.objs.values()) o.update(dt);
   for (const o of G.fx) o.update(dt);
   // лампа качается
-  lamp.rotation.z = Math.sin(time * 0.55) * 0.035; lamp.rotation.x = Math.sin(time * 0.41) * 0.03;
+  const sway = G.meta.liveCam ? 1 : 0.2;
+  lamp.rotation.z = Math.sin(time * 0.55) * 0.035 * sway; lamp.rotation.x = Math.sin(time * 0.41) * 0.03 * sway;
   bulb.getWorldPosition(spot.position);
   const flick = G.lights * (0.97 + Math.sin(time * 23) * 0.015 + (Math.random() < 0.004 ? -0.4 : 0));
   spot.intensity = 2.3 * flick;
@@ -3790,6 +3869,7 @@ function frame(t) {
     clockObj.hand.rotation.z = -(clockObj.every - clockObj.value) / clockObj.every * Math.PI * 2 + Math.sin(time * 2) * 0.03;
   }
   updateHost(dt, time);
+  if ((++hudTick & 7) === 0) updateHud();
   hoverTimer -= dt;
   if (hoverTimer <= 0) { hoverTimer = 0.15; if (pointer.has && !IS_TOUCH && !pointer.down) onHover(); }
   postMat.uniforms.time.value = time;
@@ -3886,6 +3966,8 @@ async function main(hotData) {
   G.deathPool = store.get(KEYS.deaths) || [];
   if (!Array.isArray(G.deathPool)) G.deathPool = [];
   sfx.on = G.meta.sound !== false;
+  $('btn-cam').textContent = 'Камера: ' + (G.meta.liveCam ? 'живая' : 'спокойная');
+  try { await Promise.race([document.fonts.load('700 40px Handjet'), new Promise(r => setTimeout(r, 2500))]); } catch (e) { /* без шрифта тоже играем */ }
   $('btn-sound').textContent = 'Звук: ' + (sfx.on ? 'да' : 'нет');
   if (!renderer) { $('loading').textContent = 'Браузер не поддерживает WebGL, а без него стол не нарисовать. Попробуй другой браузер.'; return; }
   resize();

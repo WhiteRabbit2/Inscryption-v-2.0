@@ -25,6 +25,12 @@ func _process(_delta: float) -> void:
 		await RenderingServer.frame_post_draw
 		var img := get_viewport().get_texture().get_image()
 		img.save_png(_shot_path)
+		if OS.get_cmdline_user_args().has("--debug-view"):
+			var v: LowResView = get_child(0)
+			print("view ", v.size, " vp ", v.viewport.size, " rect ", v.rect.size, " cam ", v.viewport.get_camera_3d())
+			var vi := v.viewport.get_texture().get_image()
+			print("vp image ", vi.get_size(), " center ", vi.get_pixel(vi.get_width() / 2, vi.get_height() / 2))
+			vi.save_png(_shot_path.replace(".png", "-vp.png"))
 		print("Снимок сохранён: ", _shot_path)
 		get_tree().quit()
 
