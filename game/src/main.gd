@@ -69,7 +69,7 @@ func _build_sandbox() -> void:
 			which = a.substr(7)
 	cam.set_view(which, true)
 	var label := Label.new()
-	label.text = "Стол Многоглазого — проверка комнаты"
+	label.text = "Многоглазый. После эфира — проверка комнаты"
 	label.position = Vector2(40, 30)
 	add_child(label)
 

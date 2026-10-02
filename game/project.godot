@@ -1,12 +1,12 @@
 ; Engine configuration file.
-; Стол Многоглазого — проект Godot 4.7.
+; «Многоглазый. После эфира» — проект Godot 4.7.
 
 config_version=5
 
 [application]
 
-config/name="Стол Многоглазого"
-config/description="Рогалик-декбилдер при свете лампы."
+config/name="Многоглазый. После эфира"
+config/description="Рогалик-декбилдер: ночная передача, бой на экране телевизора, засчитывается только то, куда смотрит ведущий."
 config/version="0.2.0"
 run/main_scene="res://src/main.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")
