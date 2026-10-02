@@ -2674,7 +2674,7 @@ function onHover() {
   } else if (hit && hit.kind === 'map') {
     const n = nearestMapNode(hit.point, null, 0.45);
     if (n) tip.showText(L.NODE_TYPES[n.type].name, nodeDesc(n), pointer.cx, pointer.cy); else tip.hide();
-  } else if (hit && HINTS[hit.kind]) {
+  } else if (hit && HINTS[hit.kind] && !G.busy) {
     const [t, d] = HINTS[hit.kind];
     let text = d;
     if (hit.kind === 'scale') { const v = G.b ? G.b.scale : 0; text = v === 0 ? 'Равновесие. Перевес 5 в твою пользу — победа, в его — гаснет свеча.' : (v > 0 ? 'Перевес ' + v + ' в твою пользу. До победы ' + Math.max(0, 5 - v) + '.' : 'Перевес ' + (-v) + ' в пользу Многоглазого. Ещё ' + Math.max(0, 5 + v) + ' — и свеча погаснет.'); }
