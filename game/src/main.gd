@@ -3,7 +3,7 @@ extends Node
 ## Отладочные параметры после «--»:
 ##   --shot=путь.png  сохранить кадр и выйти
 ##   --frames=N       сколько кадров подождать перед снимком (по умолчанию 90)
-##   --mode=battle    серый макет боя (иначе — пробная комната)
+##   --mode=battle    серый макет боя; --mode=tv — бой на телевизоре в комнате (иначе — пробная комната)
 ##   --ep=id          какая серия (по умолчанию первая серия 1-го уровня); --seed=N
 ##   --auto           бой играет сам (простой автоход); --speed=N — ускорение анимаций
 ##   --place=a:0,b:2  перед снимком выложить вкладыши из руки (номер в руке : полоса)
@@ -24,8 +24,8 @@ func _ready() -> void:
 	for a in OS.get_cmdline_user_args():
 		if a.begins_with("--mode="):
 			mode = a.substr(7)
-	if mode == "battle":
-		_build_battle()
+	if mode == "battle" or mode == "tv":
+		_build_battle(mode == "tv")
 	else:
 		_build_sandbox()
 
@@ -70,7 +70,7 @@ func _build_sandbox() -> void:
 	add_child(label)
 
 
-func _build_battle() -> void:
+func _build_battle(on_tv: bool) -> void:
 	var ep: Dictionary = Episodes.POOLS[1][0]
 	var seed_value := 1
 	var place := ""
@@ -94,6 +94,12 @@ func _build_battle() -> void:
 		deck.append(CardDB.make(id))
 	var b := Battle.create(ep, deck, ["tape", "knock", "slipper"], {"winks": 1}, seed_value)
 	var screen := BattleScreen.new()
+	if on_tv:
+		var stage := TvStage.new()
+		add_child(stage)
+		screen.tv = stage
+		stage.room.screen_material.albedo_texture = null
+		stage.room.screen_material.albedo_color = Color("101418")
 	add_child(screen)
 	screen.start(b)
 	screen.auto = OS.get_cmdline_user_args().has("--auto")

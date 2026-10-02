@@ -14,6 +14,8 @@ const HAND_CARD := Vector2(256, 180)
 
 var b: Battle
 var rewinds := 2
+## Если задан — поле кладётся на кинескоп телевизора в 3D-комнате (иначе серый макет).
+var tv: TvStage
 ## Автоход для проверок без человека.
 var auto := false
 
@@ -26,6 +28,8 @@ var wink_btn: Button
 var subtitle: Label
 var tooltip: TooltipPanel
 var overlay: Control
+var host: HostCircle
+var _bg: ColorRect
 
 var _sel_hand := -1
 var _sel_item := -1
@@ -37,11 +41,13 @@ var _auto_t := 0.0
 
 func _ready() -> void:
 	set_anchors_preset(Control.PRESET_FULL_RECT)
-	var bg := ColorRect.new()
-	bg.color = Color("232327")
-	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
-	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(bg)
+	mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_bg = ColorRect.new()
+	_bg.color = Color("232327")
+	_bg.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_bg.visible = tv == null
+	add_child(_bg)
 	board = BattleBoard.new()
 	board.position = Vector2(410, 22)
 	add_child(board)
@@ -73,6 +79,23 @@ func _ready() -> void:
 	add_child(overlay)
 
 
+## Положить поле на прямоугольник экрана (в TV-режиме — каждый кадр по кинескопу).
+func fit_board(r: Rect2) -> void:
+	var k := r.size.x / BattleBoard.BASE.x
+	board.scale = Vector2(k, k)
+	board.position = r.position + Vector2(0, (r.size.y - BattleBoard.BASE.y * k) * 0.5)
+	host.size = Vector2(100, 100) * k
+	host.position = board.position + Vector2(10, 6) * k
+	subtitle.position = board.position + Vector2(0, 760) * k
+	subtitle.size = Vector2(BattleBoard.BASE.x, 60)
+	subtitle.scale = Vector2(k, k)
+
+
+## Точка поля → координаты экрана (с учётом масштаба поля).
+func board_point(local: Vector2) -> Vector2:
+	return board.get_global_transform() * local
+
+
 func start(battle: Battle, rewinds_left := 2) -> void:
 	b = battle
 	rewinds = rewinds_left
@@ -89,7 +112,7 @@ func say(text: String) -> void:
 # ---------------------------------------------------------------- постройка
 
 func _build_host() -> void:
-	var host := HostCircle.new()
+	host = HostCircle.new()
 	host.position = Vector2(135, 18)
 	host.size = Vector2(150, 150)
 	add_child(host)
@@ -248,13 +271,13 @@ func _on_cell_hover(row: String, l: int) -> void:
 			c = CardDB.make_creature(b.sketches[l].id, int(b.cfg.tape_hp), int(b.cfg.tape_atk))
 			if b.sketches[l].hidden:
 				tooltip.show_at({"title": "Набросок", "lines": ["Мультик рисовали ночью: кто тут выйдет — не видно."]},
-					board.global_position + board.cell_rect("tape", l).end)
+					board_point(board.cell_rect("tape", l).end))
 				return
 			c.sketch = true
 	if c == null:
 		tooltip.hide_tip()
 		return
-	tooltip.show_at(_card_tip(c), board.global_position + board.cell_rect(row, l).end - Vector2(0, 100))
+	tooltip.show_at(_card_tip(c), board_point(board.cell_rect(row, l).end - Vector2(0, 100)))
 
 
 func _card_tip(c: Dictionary) -> Dictionary:
@@ -470,14 +493,14 @@ func _show_scene(ev: Array) -> void:
 				txt = "за кадром"
 				col = BattleBoard.MUTED
 		if txt != "":
-			_popup(board.position + Vector2(lw * (e.lane + 0.5), BattleBoard.MID_Y + 40), txt, col)
+			_popup(board_point(Vector2(lw * (e.lane + 0.5), BattleBoard.MID_Y + 40)), txt, col)
 	Sfx.play("hit", 0.8)
 	await _wait(0.32)
 	for e in ev:
 		if e.t == "damage":
 			var p: CardPlate = board.plate_for(e.uid)
 			if p:
-				_popup(board.position + p.position + Vector2(p.size.x * 0.5, 60), "−%d" % e.dmg, BattleBoard.BAD)
+				_popup(board_point(p.position + Vector2(p.size.x * 0.5, 60)), "−%d" % e.dmg, BattleBoard.BAD)
 	await _wait(0.3)
 	board.show_forecast = true
 
@@ -506,14 +529,14 @@ func _show_result() -> void:
 	var panel := ColorRect.new()
 	panel.color = Color(0, 0, 0.55, 0.92) if b.result == "lose" else Color(0, 0, 0, 0.85)
 	panel.position = board.position
-	panel.size = board.size
+	panel.size = board.size * board.scale
 	overlay.add_child(panel)
 	overlay.mouse_filter = Control.MOUSE_FILTER_STOP
 	var box := VBoxContainer.new()
 	box.alignment = BoxContainer.ALIGNMENT_CENTER
 	box.add_theme_constant_override("separation", 20)
-	box.position = board.position + Vector2(150, 200)
-	box.size = Vector2(800, 420)
+	box.position = board_point(Vector2(150, 200))
+	box.size = Vector2(800, 420) * board.scale
 	overlay.add_child(box)
 	if b.result == "win":
 		box.add_child(_center(UiKit.label("ОБРЫВ ПЛЁНКИ", 84, Color.WHITE, UiKit.FONT_BOLD)))
@@ -563,6 +586,8 @@ func _rewind(to_start: bool) -> void:
 # ---------------------------------------------------------------- автоход (проверки)
 
 func _process(delta: float) -> void:
+	if tv:
+		fit_board(tv.screen_rect().grow(-6))
 	if not auto or b == null or _busy:
 		return
 	_auto_t += delta * _speed()
