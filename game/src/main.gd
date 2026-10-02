@@ -26,6 +26,10 @@ func _ready() -> void:
 			mode = a.substr(7)
 	if mode == "battle" or mode == "tv":
 		_build_battle(mode == "tv")
+	elif mode == "paper":
+		var stage := TvStage.new()
+		add_child(stage)
+		stage.cut_to.call_deferred("paper")
 	else:
 		_build_sandbox()
 

@@ -222,6 +222,37 @@ func _build(sound: String) -> PackedFloat32Array:
 			b = _buf(0.2)
 			_osc(b, "triangle", 1400.0, 0.0, 0.08, 0.12)
 			_osc(b, "triangle", 1900.0, 0.06, 0.1, 0.1)
+		"static":
+			# помехи: белый шум с треском
+			b = _buf(0.45)
+			_noise(b, 0.0, 0.4, 0.22, "highpass", 1500.0)
+			for i in 6:
+				_noise(b, _rng.randf() * 0.35, 0.02, 0.35, "bandpass", 3000.0 + _rng.randf() * 3000.0, 2.0)
+		"vcr_play":
+			# кнопка видика: щелчок, глухой удар механизма, короткий моторчик
+			b = _buf(0.5)
+			_noise(b, 0.0, 0.02, 0.4, "highpass", 3500.0)
+			_osc(b, "sine", 95.0, 0.01, 0.12, 0.45, 50.0)
+			_osc(b, "saw", 58.0, 0.08, 0.35, 0.06, 64.0)
+			_noise(b, 0.1, 0.3, 0.05, "bandpass", 400.0, 2.0)
+		"vcr_rewind":
+			# перемотка: моторчик разгоняется, плёнка шуршит
+			b = _buf(1.0)
+			_osc(b, "square", 160.0, 0.0, 0.9, 0.05, 520.0)
+			_noise(b, 0.0, 0.95, 0.14, "bandpass", 800.0, 1.5, 3200.0)
+			_noise(b, 0.9, 0.05, 0.3, "highpass", 3000.0)
+		"crt_on":
+			b = _buf(0.7)
+			_osc(b, "sine", 60.0, 0.0, 0.2, 0.5, 30.0)
+			_osc(b, "sine", 7800.0, 0.05, 0.6, 0.03)
+			_noise(b, 0.0, 0.15, 0.2, "highpass", 2000.0)
+		"eye":
+			b = _buf(0.14)
+			_osc(b, "sine", 620.0, 0.0, 0.12, 0.12, 930.0)
+		"pencil":
+			b = _buf(0.35)
+			for i in 4:
+				_noise(b, i * 0.07, 0.06, 0.1, "bandpass", 2800.0 + _rng.randf() * 1500.0, 3.0)
 		_:
 			if sound.begins_with("voice"):
 				b = _voice_buf(int(sound.substr(5)))

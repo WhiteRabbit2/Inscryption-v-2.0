@@ -14,6 +14,9 @@ var screen: MeshInstance3D
 var screen_size := Vector2(0.84, 0.63)
 var vcr_label: Label3D
 var tv_light: OmniLight3D
+## Газета с программой передач на ковре (карта ночи). Размер в метрах.
+var paper: MeshInstance3D
+var paper_size := Vector2(0.96, 0.62)
 
 var _vcr_blink := 0.0
 
@@ -178,6 +181,16 @@ func _build_window() -> void:
 
 
 func _build_floor_things() -> void:
+	# газета-разворот с программой передач: печать рисует интерфейс поверх, здесь — бумага
+	paper = MeshInstance3D.new()
+	paper.name = "Paper"
+	var pq := QuadMesh.new()
+	pq.size = paper_size
+	paper.mesh = pq
+	paper.rotation_degrees = Vector3(-90, 0, 0)
+	paper.position = Vector3(0.0, 0.016, 0.95)
+	paper.material_override = _flat_mat(_tex_newsprint())
+	add_child(paper)
 	# пульт и тапок рядом с местом игрока
 	var remote := _box(Vector3(0.08, 0.025, 0.22), Vector3(1.05, 0.035, 1.35), _mat(Color("222222")))
 	remote.rotation_degrees = Vector3(0, 20, 0)
@@ -292,6 +305,22 @@ static func _tex_carpet(base: Color, gold: Color, seed_value: int, w: int, h: in
 			if (x % 24 == 12 and y % 24 == 12):
 				c = gold
 			c = c.darkened(r.randf() * 0.12)
+			img.set_pixel(x, y, c)
+	return ImageTexture.create_from_image(img)
+
+
+static func _tex_newsprint() -> ImageTexture:
+	# серая газетная бумага с колонками «текста» и сгибом посередине
+	var w := 192
+	var h := 124
+	var img := Image.create(w, h, false, Image.FORMAT_RGB8)
+	var r := RandomNumberGenerator.new()
+	r.seed = 13
+	for y in h:
+		for x in w:
+			var c := Color("cfc8b4").darkened(r.randf() * 0.06)
+			if absi(x - w / 2) <= 0:
+				c = c.darkened(0.25)
 			img.set_pixel(x, y, c)
 	return ImageTexture.create_from_image(img)
 

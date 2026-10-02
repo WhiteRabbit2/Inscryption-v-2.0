@@ -434,8 +434,10 @@ func _playback(ev: Array) -> void:
 				Sfx.play("item")
 				say(CardDB.ITEMS[e.item].name + "!")
 			"play":
-				Sfx.play("bell", 0.5)
+				Sfx.play("vcr_play", 0.8)
 				say("")
+			"sketch":
+				Sfx.play("pencil", 0.5)
 			"ink":
 				board.sync(b)
 				Sfx.play("paper", 0.6)
@@ -451,8 +453,8 @@ func _playback(ev: Array) -> void:
 				await _wait(1.2)
 			"titles":
 				say("Титры! Обе шкалы теряют по 1.")
-			"gaze_move", "gaze_add":
-				pass
+			"gaze_move", "gaze_add", "gaze_plan":
+				Sfx.play("eye", 0.35)
 			"montage":
 				board.sync(b)
 				await _wait(0.15)
@@ -547,7 +549,8 @@ func _show_result() -> void:
 		Sfx.play("win")
 		return
 	box.add_child(_center(UiKit.label("НЕТ СИГНАЛА", 84, Color.WHITE, UiKit.FONT_BOLD)))
-	Sfx.play("lose")
+	Sfx.play("static", 0.7)
+	Sfx.play("lose", 0.6)
 	if rewinds > 0:
 		box.add_child(_center(UiKit.label("Перемоток осталось: %d" % rewinds, 34, UiKit.BONE)))
 		var back := UiKit.button("Перемотать на ход назад", true)
@@ -578,7 +581,7 @@ func _rewind(to_start: bool) -> void:
 	for c in overlay.get_children():
 		c.queue_free()
 	overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	Sfx.play("whoosh")
+	Sfx.play("vcr_rewind", 0.8)
 	say("Перемотаем. Я тоже с первого раза не понял, что там произошло.")
 	_sync()
 

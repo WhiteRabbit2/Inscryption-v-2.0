@@ -28,7 +28,8 @@ func _ready() -> void:
 	# экран телевизора: центр (-0.04, 1.11, -1.569), 0.84 × 0.63 м. С 0.85 м он занимает ~1100×825 из 1920×1080.
 	var sc := screen_center()
 	cam.add_view("tv", Vector3(sc.x, sc.y - 0.08, sc.z + 0.86), Vector3(sc.x, sc.y - 0.08, sc.z - 1.0))
-	cam.add_view("paper", Vector3(0.0, 1.55, 1.75), Vector3(0.0, 0.0, 0.85))
+	# газета: почти сверху, чтобы разворот был прямоугольником на экране
+	cam.add_view("paper", Vector3(0.0, 0.86, 1.0), Vector3(0.0, 0.0, 0.94))
 	cam.add_view("room", Vector3(0.4, 1.45, 2.6), Vector3(0, 0.7, -1.4))
 	cam.set_view("tv", true)
 	_static = ColorRect.new()
@@ -61,8 +62,16 @@ func _process(delta: float) -> void:
 
 ## Прямоугольник кинескопа в координатах интерфейса (1920×1080).
 func screen_rect() -> Rect2:
-	var s: MeshInstance3D = room.screen
-	var half := room.screen_size * 0.5
+	return _project_quad(room.screen, room.screen_size)
+
+
+## Прямоугольник газеты на ковре в координатах интерфейса.
+func paper_rect() -> Rect2:
+	return _project_quad(room.paper, room.paper_size)
+
+
+func _project_quad(s: MeshInstance3D, quad_size: Vector2) -> Rect2:
+	var half := quad_size * 0.5
 	var pts := []
 	for c in [Vector2(-1, -1), Vector2(1, -1), Vector2(1, 1), Vector2(-1, 1)]:
 		var wp := s.global_transform * Vector3(c.x * half.x, c.y * half.y, 0.0)
