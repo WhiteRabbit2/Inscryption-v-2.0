@@ -15,7 +15,7 @@ extends RefCounted
 ##   {"type": "item", "slot": i, "lane": l, "gaze": g, "dir": ±1}   — lane/gaze/dir по нужде предмета
 ##   {"type": "wink", "gaze": g, "dir": ±1}                          — «подмигивание» (глаз-перебежчик)
 ##   {"type": "play"}
-## Перемотка — rewind(to_start) после поражения, если в cfg.rewinds остались.
+## Перемотка — rewind(to_start) после поражения; сколько перемоток осталось на ночь, считает забег (Run).
 
 const LANES := 4
 
@@ -30,7 +30,7 @@ const DEFAULTS := {
 	"income": 3,             # искр за ход
 	"carry": 2,              # сколько искр переходит на следующий ход
 	"spark_cap": 5,          # больше этого за ход не бывает (кроме Батареек)
-	"opening_hand": 3,       # сколько вкладышей в руке до первого хода (плюс 1 в начале хода)
+	"opening_hand": 3,       # вкладышей в руке до первого хода (плюс 1 в начале хода); ep.hand — сценарная раздача
 	"hand_max": 7,
 	"offscreen": 0,          # сколько снимает удар в пустоту за кадром (0 — ничего; запасной вариант — 1)
 	"squint_turn": 7,        # с этого хода «Присматривается» добавляет взгляд
@@ -68,6 +68,8 @@ var result := ""           # "" / "win" / "lose"
 var stats := {"signal_lost": 0, "overkill": 0, "turns": 0, "film_hits": 0, "offscreen_hits": 0}
 ## Снимки для перемотки: начало 1-го хода серии (или 2-й фазы босса), 2-го, 3-го...
 var snaps: Array = []
+## false — снимки не копятся (копии для ботов: перемотка им не нужна, а снимок стоит времени).
+var keep_snaps := true
 var _uid := 0
 var _script_pos := 0       # сколько ходов сценария уже нарисовано
 
@@ -81,10 +83,10 @@ static func create(ep: Dictionary, deck_cards: Array, pockets: Array, overrides 
 	b.cfg = DEFAULTS.duplicate()
 	for k in ep.get("cfg", {}):
 		b.cfg[k] = ep.cfg[k]
-	for k in overrides:
-		b.cfg[k] = overrides[k]
 	if ep.has("film"):
 		b.cfg.film = ep.film
+	for k in overrides:
+		b.cfg[k] = overrides[k]
 	b.rng.seed = seed_value
 	b.items = pockets.duplicate()
 	b.winks = int(b.cfg.winks)
@@ -104,6 +106,7 @@ func _setup(deck_cards: Array) -> void:
 		card.uid = _next_uid()
 		deck.append(card)
 	_shuffle(deck)
+	_stack_hand(episode.get("hand", []))
 	film_max = int(cfg.film)
 	film = film_max
 	sig_max = int(cfg.signal)
@@ -113,6 +116,19 @@ func _setup(deck_cards: Array) -> void:
 		_draw([])
 	snaps = []
 	_begin_pause([])
+
+
+## Сценарная раздача (пилот): вкладыши с этими id кладутся на верх колоды, чтобы прийти в руку по порядку.
+## Каких нет в колоде — пропускаются.
+func _stack_hand(ids: Array) -> void:
+	var top := []
+	for id in ids:
+		for i in deck.size():
+			if deck[i].id == id:
+				top.append(deck.pop_at(i))
+				break
+	top.reverse()
+	deck.append_array(top)
 
 
 ## Расстановка в начале серии или фазы: твари со старта, взгляды, первые наброски.
@@ -369,16 +385,21 @@ func _ink(ev: Array) -> void:
 
 ## Расчёт сцены без изменения состояния. Наброски считаются уже прорисованными.
 ## Возвращает: strikes (по порядку), dmg_you/dmg_tape (урон по полосам), film/sig (урон по шкалам),
-## die_you/die_tape (полосы, где карта погибнет, без учёта «Как в мультике»).
+## die_you/die_tape (полосы, где карта погибнет, без учёта «Как в мультике»),
+## hidden — полосы со скрытым наброском («Рисовали ночью»): кто там выйдет, прогноз не знает и считает клетку пустой.
 func compute_scene() -> Dictionary:
 	var tape_row := tape.duplicate()
-	for l in LANES:
-		if tape_row[l] == null and sketches[l] != null:
-			tape_row[l] = CardDB.make_creature(sketches[l].id, int(cfg.tape_hp), int(cfg.tape_atk))
 	var res := {
 		"strikes": [], "dmg_you": [0, 0, 0, 0], "dmg_tape": [0, 0, 0, 0], "film": 0, "signal": 0,
-		"die_you": [], "die_tape": [], "film_lanes": [0, 0, 0, 0], "signal_lanes": [0, 0, 0, 0],
+		"die_you": [], "die_tape": [], "film_lanes": [0, 0, 0, 0], "signal_lanes": [0, 0, 0, 0], "hidden": [],
 	}
+	for l in LANES:
+		if tape_row[l] != null or sketches[l] == null:
+			continue
+		if sketches[l].get("hidden", false):
+			res.hidden.append(l)
+		else:
+			tape_row[l] = CardDB.make_creature(sketches[l].id, int(cfg.tape_hp), int(cfg.tape_atk))
 	for l in LANES:
 		_strikes_from(you[l], tape_row[l], l, "you", res)
 		_strikes_from(tape_row[l], you[l], l, "tape", res)
@@ -659,7 +680,8 @@ func _begin_pause(ev: Array) -> void:
 	sparks = mini(carry + int(cfg.income), int(cfg.spark_cap))
 	ev.append({"t": "pause", "turn": turn, "sparks": sparks})
 	_draw(ev)
-	snaps.append(_snapshot())
+	if keep_snaps:
+		snaps.append(_snapshot())
 
 
 func _draw(ev: Array) -> void:
@@ -735,13 +757,14 @@ func _snapshot() -> Dictionary:
 	return d
 
 
-func _load(d: Dictionary) -> void:
-	cfg = d.cfg.duplicate(true)
+## copy = false — забрать массивы снимка как есть (снимок только что сделан и больше никому не нужен).
+func _load(d: Dictionary, copy := true) -> void:
+	cfg = d.cfg.duplicate(true) if copy else d.cfg
 	rng.seed = int(d.rng_seed)
 	rng.state = int(d.rng_state)
 	for f in _FIELDS:
 		var v = d[f]
-		set(f, v.duplicate(true) if (v is Array or v is Dictionary) else v)
+		set(f, v.duplicate(true) if copy and (v is Array or v is Dictionary) else v)
 
 
 func to_dict() -> Dictionary:
@@ -760,9 +783,10 @@ static func from_dict(d: Dictionary) -> Battle:
 	return b
 
 
-## Быстрая копия для ботов (без снимков перемотки).
+## Быстрая копия для ботов (без снимков перемотки и без новых снимков).
 func clone() -> Battle:
 	var b := Battle.new()
 	b.episode = episode
-	b._load(_snapshot())
+	b._load(_snapshot(), false)
+	b.keep_snaps = false
 	return b

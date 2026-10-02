@@ -354,7 +354,7 @@ static func _card_types(b: Battle) -> Array:
 static func _lane_value(c: Battle, card, l: int, res: Dictionary) -> float:
 	var v: float = W_FILM * res.film_lanes[l] - W_SIG * res.signal_lanes[l]
 	var opp = c.tape[l]
-	if opp == null and c.sketches[l] != null:
+	if opp == null and c.sketches[l] != null and not c.sketches[l].get("hidden", false):
 		opp = CardDB.make_creature(c.sketches[l].id, int(c.cfg.tape_hp), int(c.cfg.tape_atk))
 	var opp_dead: bool = opp != null and res.die_tape.has(l)
 	if opp != null:

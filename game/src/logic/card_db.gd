@@ -191,6 +191,8 @@ static func cards_of(rarity: String) -> Array:
 
 ## Короткое имя для подписи на поле.
 static func short_name(card: Dictionary) -> String:
+	if card.has("short"):
+		return card.short
 	var src: Dictionary = CARDS.get(card.id, CREATURES.get(card.id, {}))
 	if card.get("pirate", false):
 		return card.name
