@@ -3,6 +3,10 @@ extends Node
 ## Отладочные параметры после «--»:
 ##   --shot=путь.png  сохранить кадр и выйти
 ##   --frames=N       сколько кадров подождать перед снимком (по умолчанию 90)
+##   --mode=battle    серый макет боя (иначе — пробная комната)
+##   --ep=id          какая серия (по умолчанию первая серия 1-го уровня); --seed=N
+##   --auto           бой играет сам (простой автоход); --speed=N — ускорение анимаций
+##   --place=a:0,b:2  перед снимком выложить вкладыши из руки (номер в руке : полоса)
 
 var _shot_path := ""
 var _frames_left := 90
@@ -14,7 +18,16 @@ func _ready() -> void:
 			_shot_path = a.substr(7)
 		elif a.begins_with("--frames="):
 			_frames_left = int(a.substr(9))
-	_build_sandbox()
+		elif a.begins_with("--speed="):
+			Settings.test_speed = float(a.substr(8))
+	var mode := ""
+	for a in OS.get_cmdline_user_args():
+		if a.begins_with("--mode="):
+			mode = a.substr(7)
+	if mode == "battle":
+		_build_battle()
+	else:
+		_build_sandbox()
 
 
 func _process(_delta: float) -> void:
@@ -55,3 +68,37 @@ func _build_sandbox() -> void:
 	label.text = "Стол Многоглазого — проверка комнаты"
 	label.position = Vector2(40, 30)
 	add_child(label)
+
+
+func _build_battle() -> void:
+	var ep: Dictionary = Episodes.POOLS[1][0]
+	var seed_value := 1
+	var place := ""
+	for a in OS.get_cmdline_user_args():
+		if a.begins_with("--ep="):
+			var want := a.substr(5)
+			if want == Episodes.BOSS.id:
+				ep = Episodes.BOSS
+			elif want == Episodes.TUTORIAL.id:
+				ep = Episodes.TUTORIAL
+			for lv in Episodes.POOLS:
+				for e in Episodes.POOLS[lv]:
+					if e.id == want:
+						ep = e
+		elif a.begins_with("--seed="):
+			seed_value = int(a.substr(7))
+		elif a.begins_with("--place="):
+			place = a.substr(8)
+	var deck := CardDB.starter_deck()
+	for id in ["soroka", "motylek", "krot"]:
+		deck.append(CardDB.make(id))
+	var b := Battle.create(ep, deck, ["tape", "knock", "slipper"], {"winks": 1}, seed_value)
+	var screen := BattleScreen.new()
+	add_child(screen)
+	screen.start(b)
+	screen.auto = OS.get_cmdline_user_args().has("--auto")
+	if place != "":
+		for pair in place.split(","):
+			var hl := pair.split(":")
+			b.apply({"type": "place", "hand": int(hl[0]), "lane": int(hl[1])})
+		screen._sync()

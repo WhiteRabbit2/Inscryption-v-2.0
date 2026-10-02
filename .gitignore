@@ -1,1 +1,3 @@
 node_modules/
+# кэш Godot: пересобирается командой godot --headless --path game --import
+game/.godot/

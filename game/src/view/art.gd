@@ -50,6 +50,7 @@ const ARTS := {
 }
 
 static var _cache := {}
+static var _tex_cache := {}
 
 
 ## Растр рисунка: PackedByteArray W*H со значениями 0..3.
@@ -123,6 +124,25 @@ static func draw_into(img: Image, id: String, ox: int, oy: int, s: int, clip := 
 			if v == 0:
 				continue
 			img.fill_rect(Rect2i(ox + x * s, oy + y * s, s, s), BLOOD if v == 3 else INK)
+
+
+## Рисунок своими цветами (для кадров плёнки — светлая тушь на чёрном, для набросков — карандаш). Кэшируется.
+static func tinted(id: String, s: int, ink: Color, accent: Color, hatch := true) -> ImageTexture:
+	var key := "%s|%d|%s|%s|%s" % [id, s, ink.to_html(), accent.to_html(), hatch]
+	if _tex_cache.has(key):
+		return _tex_cache[key]
+	var img := Image.create(W * s, H * s, false, Image.FORMAT_RGBA8)
+	img.fill(Color(0, 0, 0, 0))
+	var g := raster(id)
+	for y in H:
+		for x in W:
+			var v := g[y * W + x]
+			if v == 0:
+				continue
+			img.fill_rect(Rect2i(x * s, y * s, s, s), accent if v == 3 else ink)
+	var tex := ImageTexture.create_from_image(img)
+	_tex_cache[key] = tex
+	return tex
 
 
 static func make_texture(id: String, s := 4, paper := Color(0, 0, 0, 0)) -> ImageTexture:

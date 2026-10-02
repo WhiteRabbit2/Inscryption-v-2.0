@@ -12,6 +12,9 @@ const BLOOD := Color("c8402c")
 const FONT_BODY := preload("res://assets/fonts/Handjet-600.ttf")
 const FONT_BOLD := preload("res://assets/fonts/Handjet-700.ttf")
 const FONT_TITLE := preload("res://assets/fonts/RuslanDisplay-400.ttf")
+## Крупные числа (атака, здоровье, цена, шкалы): у Handjet ноль с точкой и издалека похож на 8,
+## у Pixelify «2» и «5» похожи на «S». Russo One читается однозначно.
+const FONT_NUM := preload("res://assets/fonts/RussoOne-Regular.ttf")
 
 
 ## Размер шрифта с учётом настройки «размер текста».
