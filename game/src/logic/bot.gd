@@ -123,10 +123,11 @@ static func smart_turn(b: Battle, rng: RandomNumberGenerator, rank := 0) -> Arra
 	return analyze(b, rng, rank).actions
 
 
-## Полный разбор паузы: {actions, pass, no_choice, options, score}.
+## Полный разбор паузы: {actions, pass, no_choice, options, score, gap}.
+## options — сколько различных по итогу вариантов не хуже лучшего на MARGIN; gap — отрыв лучшего от второго.
 ## rank — какой по счёту из различных по итогу вариантов взять (0 — лучший; после перемотки — следующий).
 static func analyze(b: Battle, rng: RandomNumberGenerator, rank := 0) -> Dictionary:
-	var info := {"actions": [], "pass": true, "no_choice": true, "options": 1, "score": 0.0}
+	var info := {"actions": [], "pass": true, "no_choice": true, "options": 1, "score": 0.0, "gap": INF}
 	if b.over:
 		return info
 	var legal := b.legal_actions()
@@ -164,6 +165,8 @@ static func analyze(b: Battle, rng: RandomNumberGenerator, rank := 0) -> Diction
 		if g.score >= best.score - MARGIN:
 			reasonable += 1
 	info.options = reasonable
+	if groups.size() > 1:
+		info.gap = best.score - groups[1].score
 	info.no_choice = reasonable <= 1
 	var pick: Dictionary = groups[mini(rank, groups.size() - 1)]
 	info.score = pick.score
