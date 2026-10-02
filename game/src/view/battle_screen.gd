@@ -38,6 +38,9 @@ var _busy := false
 var _hand_plates: Array = []
 var _auto_t := 0.0
 var _dead_names := {}
+## Обучение «Пилотная серия»: номер шага (-1 — не обучение) и что нужно сделать на этом шаге.
+var _tut := -1
+var _tut_need := {}
 
 
 func _ready() -> void:
@@ -72,6 +75,11 @@ func _ready() -> void:
 	sb.set_content_margin_all(8)
 	subtitle.add_theme_stylebox_override("normal", sb)
 	add_child(subtitle)
+	var gear := UiKit.button("Настройки")
+	gear.position = Vector2(40, 990)
+	gear.size = Vector2(240, 64)
+	gear.pressed.connect(_open_settings)
+	add_child(gear)
 	tooltip = TooltipPanel.new()
 	add_child(tooltip)
 	overlay = Control.new()
@@ -97,12 +105,97 @@ func board_point(local: Vector2) -> Vector2:
 	return board.get_global_transform() * local
 
 
+func _open_settings() -> void:
+	var m := SettingsMenu.new()
+	add_child(m)
+	m.closed.connect(_sync)
+
+
 func start(battle: Battle, rewinds_left := 2) -> void:
 	b = battle
 	rewinds = rewinds_left
 	_sync()
 	var line: String = b.episode.get("line", "")
 	say(line if line != "" else "Серия %s. Поехали." % b.episode.get("name", ""))
+	if b.episode.get("tutorial", false):
+		_tut = 0
+		_tut_next()
+
+
+# ---------------------------------------------------------------- обучение
+
+## Шаги: 0 — вкладыш в кадр, 1 — второй за кадр, 2 — PLAY, 3 — на пунктир/набросок, 4 — дальше сами.
+func _tut_next() -> void:
+	board.marks = []
+	_tut_need = {}
+	match _tut:
+		0:
+			var l: int = b.gazes[0].lane
+			_tut_need = {"type": "place", "lane": l}
+			board.marks = [{"row": "you", "lane": l}]
+			say(Lines.pick("tut_1"))
+		1:
+			var l := _tut_free_lane(func(x): return not b.lit(x) and not b.planned(x))
+			if l < 0 or not _tut_affordable():
+				_tut = 2
+				_tut_next()
+				return
+			_tut_need = {"type": "place", "lane": l}
+			board.marks = [{"row": "you", "lane": l}]
+			say(Lines.pick("tut_1b"))
+		2:
+			_tut_need = {"type": "play"}
+			say(Lines.pick("tut_2"))
+		3:
+			var l := -1
+			for x in Battle.LANES:
+				if b.sketches[x] != null and b.you[x] == null:
+					l = x
+			if l < 0:
+				l = _tut_free_lane(func(x): return b.planned(x))
+			if l < 0 or not _tut_affordable():
+				_tut = 4
+				_tut_next()
+				return
+			_tut_need = {"type": "place", "lane": l}
+			board.marks = [{"row": "you", "lane": l}, {"row": "tape", "lane": l}]
+			say(Lines.pick("tut_3") + " " + Lines.pick("tut_4"))
+		_:
+			say(Lines.pick("tut_done"))
+			_tut = -1
+	board.queue_redraw()
+
+
+func _tut_free_lane(ok: Callable) -> int:
+	for x in Battle.LANES:
+		if b.you[x] == null and ok.call(x):
+			return x
+	return -1
+
+
+func _tut_affordable() -> bool:
+	for c in b.hand:
+		if int(c.cost) <= b.sparks:
+			return true
+	return false
+
+
+## Можно ли это действие на текущем шаге обучения.
+func _tut_allows(a: Dictionary) -> bool:
+	if _tut < 0 or _tut_need.is_empty():
+		return true
+	if a.type != _tut_need.type:
+		return false
+	return not _tut_need.has("lane") or int(a.get("lane", -1)) == int(_tut_need.lane)
+
+
+func _tut_after(a: Dictionary) -> void:
+	if _tut < 0 or not _tut_allows(a) or _tut_need.is_empty():
+		return
+	_tut += 1
+	if a.type == "play" and _tut == 3 and b.turn < 2:
+		_tut = 2
+	_tut_next()
 
 
 func say(text: String) -> void:
@@ -406,6 +499,10 @@ func _on_play() -> void:
 # ---------------------------------------------------------------- проигрывание событий
 
 func _act(a: Dictionary) -> void:
+	if not _tut_allows(a):
+		say("Сначала — туда, где красный кружок." if _tut_need.get("type") == "place" else "Теперь — PLAY.")
+		Sfx.play("deny", 0.5)
+		return
 	_busy = true
 	_dead_names.clear()
 	for c in b.you:
@@ -417,6 +514,8 @@ func _act(a: Dictionary) -> void:
 	_sync()
 	if b.over:
 		_show_result()
+	elif _tut >= 0:
+		_tut_after(a)
 	else:
 		_comment(a, ev)
 

@@ -24,9 +24,10 @@ func _ready() -> void:
 	panel.add_child(box)
 	box.add_child(UiKit.label("Настройки", 44, UiKit.BONE, UiKit.FONT_BOLD))
 
-	_toggle(box, "Спокойная камера (не качается)", "calm_camera")
+	_toggle(box, "Спокойный режим: камера на месте, без ряби", "calm_camera")
 	_slider(box, "Плёночные эффекты: зерно и дизеринг", "effects", 0.0, 1.0)
-	_options(box, "Размер текста", "text_scale", [["Обычный", 1.0], ["Крупный", 1.15], ["Очень крупный", 1.3]])
+	_options(box, "Размер текста", "text_scale", [["100%", 1.0], ["125%", 1.25], ["150%", 1.5]])
+	_toggle(box, "Простой шрифт для описаний", "plain_font")
 	_toggle(box, "Быстрые анимации боя", "fast_animations")
 	_slider(box, "Громкость", "master_volume", 0.0, 1.0)
 	_slider(box, "Гул и музыка", "music_volume", 0.0, 1.0)

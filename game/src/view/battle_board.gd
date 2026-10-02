@@ -33,6 +33,8 @@ var b: Battle
 var gaze_disp: Array = []
 ## Подсветка клеток, куда можно положить выбранное (row → [lanes]).
 var targets := {}
+## Красные кружки «как в видеоразборе» (обучение и подсказки): [{row, lane}].
+var marks: Array = []
 var forecast := {}
 var show_forecast := true
 var plates := {}           # uid → CardPlate
@@ -193,6 +195,18 @@ func _draw() -> void:
 	_draw_film_gauge()
 	_draw_signal_gauge()
 	_draw_forecast()
+	for m in marks:
+		# красный овал от руки, как в видеоразборе: чуть больше клетки и не до конца замкнутый
+		var mr := cell_rect(m.row, m.lane)
+		var c := mr.get_center()
+		var rx := mr.size.x * 0.5 + 16
+		var ry := mr.size.y * 0.5 + 12
+		var pts := PackedVector2Array()
+		for k in 50:
+			var a := -0.5 + (TAU + 0.6) * k / 49.0
+			var wob := 1.0 + 0.03 * sin(a * 3.0)
+			pts.append(c + Vector2(cos(a) * rx * wob, sin(a) * ry * wob))
+		draw_polyline(pts, Color("e8261c"), 7.0, true)
 
 
 func _tag(p: Vector2, w: float, text: String, col: Color, dotted := false) -> void:
